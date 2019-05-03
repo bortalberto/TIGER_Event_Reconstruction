@@ -1,5 +1,5 @@
-DATADIR="~/data/raw_dat/$1"
-ANADIR="~/data/raw_root/$1"
+DATADIR="$HOME/data/raw_dat/$1"
+ANADIR="$HOME/data/raw_root/$1"
 HERE=$PWD
 
 if [ ! -d ${ANADIR} ]

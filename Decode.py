@@ -163,7 +163,7 @@ class reader:
                             lstcoarse_10b.append(((int_x>>32)&0x3FF))
                             temp_tcoarse = ((int_x>>32)&0x3FF)
 
-                            tcoarse = (int_x>>32)&0x3FF
+                            tcoarse = (int_x>>32)&0xFFFF
                             ecoarse = (int_x>>20)&0x3FF
                             if (((int_x >> 20)&0x3FF) - ((int_x >> 32)&0x3FF))>0:   
                                 lsdelta_coarse.append(((int_x >> 20)&0x3FF) - ((int_x >> 32)&0x3FF))

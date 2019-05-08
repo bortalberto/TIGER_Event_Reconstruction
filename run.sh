@@ -24,20 +24,17 @@ do
     cp ${DATADIR}/${DATA}GEMROC_*_TM.dat .
 
     for ((g=0; g<=11; g++))
-    #for ((g=0; g<=3; g++))
-    #for ((g=4; g<=11; g++))
     do
 	if [ -f "${DATA}GEMROC_${g}_TM.dat" ]; then
-	   python Decode.py ${DATA}GEMROC_${g}_TM.dat $g 1 $r
+	    python Decode.py ${DATA}GEMROC_${g}_TM.dat $g 1 $r
 	fi
     done
-
-    hadd decode.root ${DATA}GEMROC*root
-    #root -b -q ana.cxx
-    ./bin/ana
-    #root -b -q event.cxx
-    ./bin/event
     
+    hadd -f decode.root ${DATA}GEMROC*root
+
+    ./bin/ana
+    ./bin/event
+
     mv decode.root ${ANADIR}/${DATA}decode.root
     mv ana.root ${ANADIR}/${DATA}ana.root
     mv event.root ${ANADIR}/${DATA}event.root
@@ -57,9 +54,5 @@ root -b -q check_L2.cxx
 rm -f check*cxx
 
 echo "Finish"
-pwd
-ls
 
-#mv event.root $1_event.root
 cd $HERE
-#cd ..

@@ -85,6 +85,9 @@ class reader:
 
         pre_timestamp = 0
 
+        hitcounter=0
+        max_hitcount=100000
+
         with open(path, 'rb') as f:
             for i in range(0, statinfo.st_size // 8):
                     data = f.read(8)
@@ -220,9 +223,11 @@ class reader:
                                     mystruct.layer_id = 1
                                 elif(gemrocid>3):
                                     mystruct.layer_id = 2
-
+                                    
+                                hitcounter = hitcounter + 1
+                                if(hitcounter>max_hitcount): 
+                                    continue
                                 tree.Fill()
-
                             packet_header = 0
                             packet_tailer = 0
 

@@ -1,5 +1,8 @@
 #include "event.h"
 
+const int MAX_SIZE = 300;
+const bool save_TP = true;
+
 int count_unique(std::vector<int> v){
     std::sort(v.begin(), v.end());
     auto last = std::unique(v.begin(), v.end());
@@ -18,7 +21,8 @@ int count_diff(std::vector<int> v){
 void event(){
   std::string iname="ana.root";
   std::string oname="event.root";
-
+  
+  bool toohits = false;
     auto file = new TFile(iname.c_str());
     auto tree = (TTree*)file->Get("tree");
 
@@ -65,8 +69,8 @@ void event(){
 
     int evtNo, nhits, ngemrocs, ntimestamp, runNo, ntcoarse_L1_TP, ntcoarse_L2_TP;
     float trigg_tcoarse;
-    int tcount[900], tchannel[900], tgemroc[900], tFEB[900], ttimestamp[900], tstrip_x[900], tstrip_v[900], tl1ts_min_tcoarse[900], tchip[900], tFEB_label[900], tquality[900], tlayer[900];
-    float tcharge_SH[900], tpos_phi[900], ttcoarse[900], tecoarse[900], ttfine[900], tefine[900], t_min_ttrigg[900], tconstant[900], tslope[900], tqmax[900], ttime[900], tradius[900], ttrigg[900], delta_coarse[900];
+    int tcount[MAX_SIZE], tchannel[MAX_SIZE], tgemroc[MAX_SIZE], tFEB[MAX_SIZE], ttimestamp[MAX_SIZE], tstrip_x[MAX_SIZE], tstrip_v[MAX_SIZE], tl1ts_min_tcoarse[MAX_SIZE], tchip[MAX_SIZE], tFEB_label[MAX_SIZE], tquality[MAX_SIZE], tlayer[MAX_SIZE];
+    float tcharge_SH[MAX_SIZE], tpos_phi[MAX_SIZE], ttcoarse[MAX_SIZE], tecoarse[MAX_SIZE], ttfine[MAX_SIZE], tefine[MAX_SIZE], t_min_ttrigg[MAX_SIZE], tconstant[MAX_SIZE], tslope[MAX_SIZE], tqmax[MAX_SIZE], ttime[MAX_SIZE], tradius[MAX_SIZE], ttrigg[MAX_SIZE], delta_coarse[MAX_SIZE];
 
     otree->Branch("runNo",&runNo,"runNo/i"); // the run index
     otree->Branch("evtNo",&evtNo,"evtNo/i"); // the event number index in each run
@@ -118,150 +122,165 @@ void event(){
     std::vector<int> vtcoarse_L1_TP;
     std::vector<int> vtcoarse_L2_TP;
 
+    cout<<"Number of entries: "<<tree->GetEntries()<<endl;
     for (std::pair<int, int> elem : mevt){
-	if(itcount==elem.first||nhits==0){ //an event collects all hits which have a same GEMROC LOCAL_COUNT number
-	    itcount = elem.first;
-	    tree->GetEntry(elem.second);
-	    if(!runNo) runNo = drunNo;
-
-	    ttrigg[nhits] = -999;
-	    if(dtrigg_flag){ // trigger channgel
-		trigg_tcoarse = dtrigg_tcoarse;
-		vttrigg.push_back(dtrigg_tcoarse);
-		vtrigg_gemroc.push_back(dgemroc);
-		vlasttigerframenum.push_back(dlasttigerframenum);
-		ttrigg[nhits] = dtrigg_tcoarse;
-
-	    }
-	    //if(dcharge_SH<0) continue;
-	    //if(dlayer==2&&dchannel>60) continue; // channel 61,62,63 for L2 are not used!
-	    //if(dstrip_v==-1&&dstrip_x==-1) continue; // some stripID are not properly setted at the present !!!
-
-	    tcount[nhits] = dcount;
-	    tlayer[nhits] = dlayer;
-	    tchannel[nhits] = dchannel;
-	    tgemroc[nhits] = dgemroc;
-	    tFEB[nhits] = dFEB;
-	    ttimestamp[nhits] = dtimestamp;
-	    tcharge_SH[nhits] = dcharge_SH;
-	    tpos_phi[nhits] = dpos_phi;
-	    tradius[nhits] = dradius;
-	    tstrip_x[nhits] = dstrip_x;
-	    tstrip_v[nhits] = dstrip_v;
-	    ttcoarse[nhits] = dtcoarse;
-	    tecoarse[nhits] = decoarse;
-	    ttfine[nhits] = dtfine;
-	    tchip[nhits] = dchip;
-	    tFEB_label[nhits] = dFEB_label;
-	    tefine[nhits] = define;
-	    tl1ts_min_tcoarse[nhits] = dl1ts_min_tcoarse;
-	    tconstant[nhits] = dconstant;
-	    tslope[nhits] = dslope;
-	    tqmax[nhits] = dqmax;
-	    tquality[nhits] = 0;
-	    ttime[nhits] = dtime;
-	    delta_coarse[nhits] = ddelta_coarse;
-	    ////tag tquality
-	    //if(dFEB_label==10&&dchip==2) tquality[nhits] = 1;
-	    //if(dFEB_label==13&&dchip==1) tquality[nhits] = 1;
-	    //if(dFEB_label==14) tquality[nhits] = 1;
-	    //if(dFEB_label==3&&dchip==1) tquality[nhits] = 1;
-	    //if(dFEB_label==0&&dchip==1) tquality[nhits] = 1;
-	    ////the above tagging only avabile for Ferrara data on Nov. 2018
-	    //
-	    //check test pulse
-	    if(dlayer==1){
-		//if(dchannel<36&&dchannel%7==0) vtcoarse_L1_TP.push_back(dtcoarse);
-		if(dchannel==20) vtcoarse_L1_TP.push_back(dtcoarse);
-	    }
-	    if(dlayer==2){
-		//if(dchannel==20) vtcoarse_L2_TP.push_back(dtcoarse);
-		if(dchannel==20&&dFEB<4&&dgemroc<10) vtcoarse_L2_TP.push_back(dtcoarse);
-	    }
-
-	    vgemrocs.push_back(dgemroc);
-	    vtimestamp.push_back(dtimestamp);
-	    nhits++;
-	    if(nhits>900) {std::cout<<"the number of hits is out of ARRAY range"<<std::endl; break;}
+      if(elem.second==0&&evtNo>2) break;
+      toohits=false;
+      if(itcount==elem.first||nhits==0){ //an event collects all hits which have a same GEMROC LOCAL_COUNT number
+	if(toohits)continue;
+	
+	itcount = elem.first;
+	tree->GetEntry(elem.second);
+	  if(!runNo) runNo = drunNo;
+	  
+	  ttrigg[nhits] = -999;
+	  if(dtrigg_flag){ // trigger channgel
+	    trigg_tcoarse = dtrigg_tcoarse;
+	    vttrigg.push_back(dtrigg_tcoarse);
+	    vtrigg_gemroc.push_back(dgemroc);
+	    vlasttigerframenum.push_back(dlasttigerframenum);
+	    ttrigg[nhits] = dtrigg_tcoarse;
+	    
+	  }
+	  //if(dcharge_SH<0) continue;
+	  //if(dlayer==2&&dchannel>60) continue; // channel 61,62,63 for L2 are not used!
+	  //if(dstrip_v==-1&&dstrip_x==-1) continue; // some stripID are not properly setted at the present !!!
+	  
+	  //                                                                                                                                                                                                              
+	  //check test pulse                                                                                                                                                                                              
+	  if(dlayer==1){
+	    //if(dchannel<36&&dchannel%7==0) vtcoarse_L1_TP.push_back(dtcoarse);                                                                                                                                        
+	    if(dchannel==20) vtcoarse_L1_TP.push_back(dtcoarse);
+	  }
+	  if(dlayer==2){
+	    //if(dchannel==20) vtcoarse_L2_TP.push_back(dtcoarse);                                                                                                                                                      
+	    if(dchannel==20) vtcoarse_L2_TP.push_back(dtcoarse);
+	  }
+	  
+	  vgemrocs.push_back(dgemroc);
+	  vtimestamp.push_back(dtimestamp);
+	  
+	  //To speed up the code the TP is not saved
+	  if(!save_TP && dchannel== 20) continue;
+	  
+	  //Check if there are BAD event due to ROC problem --> S/H only !!!
+	  if(ddelta_coarse!=22 && ddelta_coarse!=21) continue;
+	  
+	  
+	  tcount[nhits] = dcount;
+	  tlayer[nhits] = dlayer;
+	  tchannel[nhits] = dchannel;
+	  tgemroc[nhits] = dgemroc;
+	  tFEB[nhits] = dFEB;
+	  ttimestamp[nhits] = dtimestamp;
+	  tcharge_SH[nhits] = dcharge_SH;
+	  tpos_phi[nhits] = dpos_phi;
+	  tradius[nhits] = dradius;
+	  tstrip_x[nhits] = dstrip_x;
+	  tstrip_v[nhits] = dstrip_v;
+	  ttcoarse[nhits] = dtcoarse;
+	  tecoarse[nhits] = decoarse;
+	  ttfine[nhits] = dtfine;
+	  tchip[nhits] = dchip;
+	  tFEB_label[nhits] = dFEB_label;
+	  tefine[nhits] = define;
+	  tl1ts_min_tcoarse[nhits] = dl1ts_min_tcoarse;
+	  tconstant[nhits] = dconstant;
+	  tslope[nhits] = dslope;
+	  tqmax[nhits] = dqmax;
+	  tquality[nhits] = 0;
+	  ttime[nhits] = dtime;
+	  delta_coarse[nhits] = ddelta_coarse;
+	  ////tag tquality
+	  //if(dFEB_label==10&&dchip==2) tquality[nhits] = 1;
+	  //if(dFEB_label==13&&dchip==1) tquality[nhits] = 1;
+	  //if(dFEB_label==14) tquality[nhits] = 1;
+	  //if(dFEB_label==3&&dchip==1) tquality[nhits] = 1;
+	  //if(dFEB_label==0&&dchip==1) tquality[nhits] = 1;
+	  ////the above tagging only avabile for Ferrara data on Nov. 2018
+	  
+	  nhits++;
+	  if(nhits>MAX_SIZE) {std::cout<<"the number of hits is out of ARRAY range"<<std::endl; nhits=0; toohits=true; continue;}
+      }
+      else{
+	ngemrocs = count_unique(vgemrocs);
+	ntimestamp = count_unique(vtimestamp);
+	
+	if(!vtcoarse_L1_TP.empty()) ntcoarse_L1_TP = count_diff(vtcoarse_L1_TP);
+	else ntcoarse_L1_TP = 9999;
+	
+	if(!vtcoarse_L2_TP.empty()) ntcoarse_L2_TP = count_diff(vtcoarse_L2_TP);
+	else ntcoarse_L2_TP = 9999;
+	
+	if(ngemrocs<2 || nhits<2){ //at least two gemrocs should be fired with two hits
+	  nhits = 0;
+	  vgemrocs.clear();
+	  vtimestamp.clear();
+	  vttrigg.clear();
+	  vtcoarse_L1_TP.clear();
+	  vtcoarse_L2_TP.clear();
+	  continue;
 	}
 	else{
-	    ngemrocs = count_unique(vgemrocs);
-	    ntimestamp = count_unique(vtimestamp);
-
-	    if(!vtcoarse_L1_TP.empty()) ntcoarse_L1_TP = count_diff(vtcoarse_L1_TP);
-	    else ntcoarse_L1_TP = 9999;
-
-	    if(!vtcoarse_L2_TP.empty()) ntcoarse_L2_TP = count_diff(vtcoarse_L2_TP);
-	    else ntcoarse_L2_TP = 9999;
-
-	    if(ngemrocs<2 || nhits<2){ //at least two gemrocs should be fired with two hits
-		nhits = 0;
-		vgemrocs.clear();
-		vtimestamp.clear();
-		vttrigg.clear();
-		vtcoarse_L1_TP.clear();
-		vtcoarse_L2_TP.clear();
-		continue;
-	    }
-	    else{
-		int good = 0;
-		//for(int i=1; i<nhits; i++){
-		//  if(sin(tpos_phi[0])*sin(tpos_phi[i])<0) good++; //require one hit with negtive pos_phi, anther one with postive pos_phi
-		//}
-		for(int i=0; i<nhits; i++){
-                    good++; //no pos_phi requirement
-                }
-		if(good==0){
-		    nhits = 0;
-		    trigg_tcoarse = -9999;
-		    vgemrocs.clear();
-		    vtimestamp.clear();
-		    vttrigg.clear();
-		    continue;
-		}
-
-		//for(int i=0; i<vttrigg.size(); i++){
-		//    cout<<vtrigg_gemroc[i]<<"\t";
-		//}
-		//cout<<""<<endl;
-		//for(int i=0; i<vttrigg.size(); i++){
-		//    cout<<vttrigg[i]<<"\t";
-		//}
-		//cout<<""<<endl;
-		//cout<<""<<endl;
-
-
-		for(int i=0; i<nhits; i++){
-		    //if(tstrip_x[i]<0){ 
-		    //    t_min_ttrigg[i]=-9999; 
-		    //    continue;
-		    //}
-		    //if(vttrigg.size()<1) vttrigg.push_back(-99);
-		    if(tlayer[i]==1){
-			if(ntcoarse_L1_TP>3) t_min_ttrigg[i] = -9999;
-			else t_min_ttrigg[i] = TMath::Abs(ttcoarse[i]) - TMath::Abs(vtcoarse_L1_TP[0]);
-		    }
-		    if(tlayer[i]==2){
-			if(ntcoarse_L2_TP>3) t_min_ttrigg[i] = -9999;
-			else t_min_ttrigg[i] = TMath::Abs(ttcoarse[i]) - TMath::Abs(vtcoarse_L2_TP[0]);} //if there are two trigger time in one event, only the first one is used here.
-		}
-	    }
-
-	    evtNo++;
-	    otree->Fill();
-	    nhits=0;
+	  int good = 0;
+	  //for(int i=1; i<nhits; i++){
+	  //  if(sin(tpos_phi[0])*sin(tpos_phi[i])<0) good++; //require one hit with negtive pos_phi, anther one with postive pos_phi
+	  //}
+	  for(int i=0; i<nhits; i++){
+	    good++; //no pos_phi requirement
+	  }
+	  if(good==0){
+	    nhits = 0;
 	    trigg_tcoarse = -9999;
 	    vgemrocs.clear();
 	    vtimestamp.clear();
 	    vttrigg.clear();
-	    vtcoarse_L1_TP.clear();
-	    vtcoarse_L2_TP.clear();
-	    if(evtNo%100==0) std::cout<<"Evt. No.\t"<<evtNo<<std::endl;
-	    if(evtNo>1000) break;
+	    continue;
+	  }
+	  
+	  //for(int i=0; i<vttrigg.size(); i++){
+	  //    cout<<vtrigg_gemroc[i]<<"\t";
+	  //}
+	  //cout<<""<<endl;
+	  //for(int i=0; i<vttrigg.size(); i++){
+	  //    cout<<vttrigg[i]<<"\t";
+	  //}
+	  //cout<<""<<endl;
+	  //cout<<""<<endl;
+	  
+	  
+	  for(int i=0; i<nhits; i++){
+	    //if(tstrip_x[i]<0){ 
+	    //    t_min_ttrigg[i]=-9999; 
+	    //    continue;
+	    //}
+	    //if(vttrigg.size()<1) vttrigg.push_back(-99);
+	    if(tlayer[i]==1){
+	      if(ntcoarse_L1_TP>3) t_min_ttrigg[i] = -9999;
+	      else t_min_ttrigg[i] = TMath::Abs(ttcoarse[i]) - TMath::Abs(vtcoarse_L1_TP[0]);
+	    }
+	    if(tlayer[i]==2){
+	      if(ntcoarse_L2_TP>3) t_min_ttrigg[i] = -9999;
+	      else t_min_ttrigg[i] = TMath::Abs(ttcoarse[i]) - TMath::Abs(vtcoarse_L2_TP[0]);} //if there are two trigger time in one event, only the first one is used here.
+	    //cout<<ttcoarse[i]<<" "<<ttfine[i]<<endl;
+	  }
 	}
 	
-	}
-
+	evtNo++;
+	otree->Fill();
+	nhits=0;
+	trigg_tcoarse = -9999;
+	vgemrocs.clear();
+	vtimestamp.clear();
+	vttrigg.clear();
+	vtcoarse_L1_TP.clear();
+	vtcoarse_L2_TP.clear();
+	if(evtNo%100==0) std::cout<<"Evt. No.\t"<<evtNo<<std::endl;
+	if(evtNo>=1000000) break;
+      }
+      
+    }
+    
     otree->Write();
     file->Close();
     ofile->Close();

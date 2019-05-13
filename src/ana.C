@@ -114,17 +114,17 @@ void ana(){
     TDCcons_Tmin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][2] = Tac2_Tfine_min;
     TDCcons_Tmin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][3] = Tac3_Tfine_min;
     TDCcons_Tbin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][0] = 6.25 / (Tac0_Tfine_max - Tac0_Tfine_min);
-    TDCcons_Tbin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][1] = 6.25 / (Tac1_Tfine_max - Tac0_Tfine_min);
-    TDCcons_Tbin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][2] = 6.25 / (Tac2_Tfine_max - Tac0_Tfine_min);
-    TDCcons_Tbin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][3] = 6.25 / (Tac3_Tfine_max - Tac0_Tfine_min);
+    TDCcons_Tbin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][1] = 6.25 / (Tac1_Tfine_max - Tac1_Tfine_min);
+    TDCcons_Tbin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][2] = 6.25 / (Tac2_Tfine_max - Tac2_Tfine_min);
+    TDCcons_Tbin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][3] = 6.25 / (Tac3_Tfine_max - Tac3_Tfine_min);
     TDCcons_Emin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][0] = Tac0_Efine_min;
     TDCcons_Emin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][1] = Tac1_Efine_min;
     TDCcons_Emin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][2] = Tac2_Efine_min;
     TDCcons_Emin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][3] = Tac3_Efine_min;
     TDCcons_Ebin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][0] = 6.25 / (Tac0_Efine_max - Tac0_Efine_min);
-    TDCcons_Ebin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][1] = 6.25 / (Tac1_Efine_max - Tac0_Efine_min);
-    TDCcons_Ebin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][2] = 6.25 / (Tac2_Efine_max - Tac0_Efine_min);
-    TDCcons_Ebin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][3] = 6.25 / (Tac3_Efine_max - Tac0_Efine_min);
+    TDCcons_Ebin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][1] = 6.25 / (Tac1_Efine_max - Tac1_Efine_min);
+    TDCcons_Ebin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][2] = 6.25 / (Tac2_Efine_max - Tac2_Efine_min);
+    TDCcons_Ebin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][3] = 6.25 / (Tac3_Efine_max - Tac3_Efine_min);
   }
   
   

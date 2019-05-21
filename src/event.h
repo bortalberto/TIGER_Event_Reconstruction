@@ -8,6 +8,7 @@
 #include <string>
 #include "TCanvas.h"
 #include "TH2F.h"
+#include "TCut.h"
 #include <map>
 
 using namespace std;

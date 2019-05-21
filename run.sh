@@ -12,45 +12,51 @@ else
     rm -f ${ANADIR}/log
 fi
 
-if [ ! -f "${DATADIR}/file_list" ]; then
-    echo "cannot find \"file_list\" in ${DATADIR}"
-    return;
-fi
+#if [ ! -f "${DATADIR}/file_list" ]; then
+#    echo "cannot find \"file_list\" in ${DATADIR}"
+#    return;
+#fi
 
-rm Spill_*GEMROC*_TM.* -f
+rm Spill_*GEMROC*.* -f
 r=1
-for DATA in `cat ${DATADIR}/file_list`
+ls ${DATADIR}
+
+for ROC in `ls ${DATADIR}/Spill* | sed 's/^.\{,48\}//' | sed 's/.$//' | sed 's/.$//'| sed 's/.$//' | sed 's/.$//'   `
 do
-    cp ${DATADIR}/${DATA}GEMROC_*_TM.dat .
+    echo ROC: ${ROC}
+    echo FILE: ${DATADIR}/Spill_$1_GEMROC_*.dat
+    cp ${DATADIR}/Spill_$1_GEMROC_*.dat .
 
-    for ((g=0; g<=11; g++))
-    do
-	if [ -f "${DATA}GEMROC_${g}_TM.dat" ]; then
-	    python Decode.py ${DATA}GEMROC_${g}_TM.dat $g 1 $r
-	fi
-    done
-    
-    hadd -f decode.root ${DATA}GEMROC*root
+    echo NOME: Spill_$1_GEMROC_${ROC}.dat
+    if [ -f "Spill_$1_GEMROC_${ROC}.dat" ]; then
+	#python Decode.py Spill_$1_GEMROC_${ROC}.dat ${ROC} 1 $r # triggermatch
+	python Decode.py Spill_$1_GEMROC_${ROC}.dat ${ROC} 0 $r #triggerless
+    fi
 
-    ./bin/ana
-    ./bin/event
+    ls
+done  
+hadd -f decode.root Spill_$1_GEMROC*root
 
-    mv decode.root ${ANADIR}/${DATA}decode.root
-    mv ana.root ${ANADIR}/${DATA}ana.root
-    mv event.root ${ANADIR}/${DATA}event.root
-    echo "RunNo. $r\t${DATA}*" >> ${ANADIR}/log
 
-    rm Spill_*GEMROC*_TM.* -f
-    let r+=1
-done
+./bin/ana
+./bin/event
+
+mv decode.root ${ANADIR}/Spill_$1_decode.root
+mv ana.root ${ANADIR}/Spill_$1_ana.root
+mv event.root ${ANADIR}/Spill_$1_event.root
+mv channel_chip.pdf ${ANADIR}/.
+echo "RunNo. $r\t${ROC}*" >> ${ANADIR}/log
+
+rm Spill_*GEMROC*.* -f
+
 
 cd ${ANADIR}
 hadd -f ana.root *ana.root
 hadd -f event.root *event.root
 
-cp $HERE/check*cxx .
-root -b -q check_L1.cxx
-root -b -q check_L2.cxx
+#cp $HERE/check*cxx .
+#root -b -q check_L1.cxx
+#root -b -q check_L2.cxx
 rm -f check*cxx
 
 echo "Finish"

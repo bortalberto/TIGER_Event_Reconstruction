@@ -2,6 +2,7 @@
 
 const int MAX_SIZE = 300;
 const bool save_TP = true;
+const bool at_least_two_roc = false;
 
 int count_unique(std::vector<int> v){
     std::sort(v.begin(), v.end());
@@ -63,6 +64,97 @@ void event(){
 	tree->GetEntry(i);
 	mevt.insert(std::pair<int,int>(dcount,i));
     }
+
+    //Channel analysis
+    int max_channel = 64;
+    int max_chip = 8;
+    TCanvas *c1 = new TCanvas("c1","c1",800,600);
+    TH2I *channel_chip = new TH2I ("channel_chip","channel_chip",max_channel,0,max_channel,max_chip,0,max_chip);
+    int mean =999999;
+    int std = 999999;
+     int count_cut = 0;
+    int count_post = 0;
+    double mean_post = 0;
+    double std_post = 0;
+    int bad_channel[max_chip][max_channel];
+    int n_bad_channel[max_chip];
+    int n_std=3;//it was 3
+    float charge_min = 2.5;
+    bool first_time=true;
+    TCut bad_ch = "";
+    TCut charge_cut = Form("charge_SH> %f && charge_SH<20",charge_min);
+    for(int i=0;i<max_chip;i++) n_bad_channel[i]=0;
+    tree->Draw("FEB_label+chip-1:channel>>channel_chip",charge_cut,"zcol");
+    c1->SaveAs("channel_chip.pdf(","pdf");    
+    while(1){
+      //cout<<"hello"<<endl;
+      for(int i=0;i<max_channel;i++){
+	for(int j=0;j<max_chip;j++){
+	  int tmp = channel_chip->GetBinContent(i+1,j+1);
+	  //cout<<i<<" "<<j<<" "<<tmp<<endl;
+	  if(tmp>mean+n_std*std) {
+	    //cout<<tmp<<" "<<mean+std<<" "<<i<<" "<<j<<endl;
+	    channel_chip->SetBinContent(i+1,j+1,0);
+	    //cout<<"Removed chip "<<j<<" channel "<<i<<endl;
+	    bad_channel[j][n_bad_channel[j]]=i;
+	    n_bad_channel[j]++;
+	    //bad_ch += Form("(FEB_label+chip-1!=%i)||(FEB_label+chip-1==%i&&channel!=%i)",j,j,i);
+	    //cout<<bad_ch<<endl;
+	    count_cut++;
+	  }
+	  if(tmp && tmp<mean+n_std*std){
+	    mean_post+=tmp;
+	    count_post++;
+	  }   
+	}
+      }
+      mean_post/=count_post;
+      for(int i=0;i<max_channel;i++){
+	for(int j=0;j<max_chip;j++){
+	  int tmp = channel_chip->GetBinContent(i+1,j+1);
+	  //cout<<i<<" "<<j<<" "<<tmp<<endl;
+	  if(tmp>0 && tmp<mean+n_std*std) {
+	    std_post+=pow(mean_post-tmp,2);
+	  }   
+	}
+      }
+      std_post/=count_post;
+      std_post=sqrt(std_post);
+      //cout<<count_cut<<endl;
+      cout<<count_post<<" "<<mean_post<<" "<<std_post<<endl;
+      if(!count_cut && !first_time) break;
+      first_time=false;
+      count_cut=0;
+      mean=mean_post;
+      std=std_post;
+      count_post=0;
+      mean_post=0;
+      std_post=0;
+    }
+
+
+    for(int j=0;j<max_chip;j++){
+      cout<<"chip "<<j<<" n_bad_ch "<<n_bad_channel[j]<<endl;
+      if(!n_bad_channel[j]) continue;
+      TString tmp_cut = Form("(FEB_label+chip-1!=%i)||(FEB_label+chip-1==%i",j,j);
+      for(int i=0;i<n_bad_channel[j];i++) tmp_cut +=Form("&&channel!=%i",bad_channel[j][i]);
+      tmp_cut +=")";
+      bad_ch += tmp_cut;
+    }
+
+
+
+    c1->SaveAs("channel_chip.pdf","pdf");
+    //cout<<charge_cut<<" "<<charge_min<<endl;
+    tree->Draw("charge_SH",charge_cut);
+    c1->SaveAs("channel_chip.pdf","pdf");
+    charge_cut += bad_ch;
+    //cout<<charge_cut<<endl;
+    tree->Draw("charge_SH",charge_cut);
+    c1->SaveAs("channel_chip.pdf)","pdf");
+    return;
+
+
 
     auto ofile = new TFile(oname.c_str(),"RECREATE");
     auto otree = new TTree("tree","tree");
@@ -212,7 +304,7 @@ void event(){
 	if(!vtcoarse_L2_TP.empty()) ntcoarse_L2_TP = count_diff(vtcoarse_L2_TP);
 	else ntcoarse_L2_TP = 9999;
 	
-	if(ngemrocs<2 || nhits<2){ //at least two gemrocs should be fired with two hits
+	if(at_least_two_roc && (ngemrocs<2 || nhits<2)){ //at least two gemrocs should be fired with two hits
 	  nhits = 0;
 	  vgemrocs.clear();
 	  vtimestamp.clear();

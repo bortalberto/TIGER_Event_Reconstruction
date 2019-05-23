@@ -1,8 +1,24 @@
 #include "event.h"
 
-const int MAX_SIZE = 300;
 const bool save_TP = true;
 const bool at_least_two_roc = false;
+const bool test_chip_channel = false;
+const bool test_ROC_efficiency = true;
+
+const int MAX_SIZE = 300;
+const int N_TIGER = 88;
+const int MAX_EVENT = 1000;
+
+//In file variables
+int dchannel, dgemroc, dFEB, dcount, dtimestamp, dstrip_x, dstrip_v, dl1ts_min_tcoarse, dlasttigerframenum, dchip, dFEB_label, drunNo, dlayer, dtrigg_flag;
+float dcharge_SH, dpos_phi, dtcoarse, decoarse, dtfine, define, dttrigg, dtrigg_tcoarse, dconstant, dslope, dqmax, dtime, dradius, ddelta_coarse; 
+
+//TP test
+int TP_count[N_TIGER];
+int TP_value[N_TIGER];
+int TP_diff [N_TIGER];
+
+TTree *otree;
 
 int count_unique(std::vector<int> v){
     std::sort(v.begin(), v.end());
@@ -64,100 +80,101 @@ void event(){
 	tree->GetEntry(i);
 	mevt.insert(std::pair<int,int>(dcount,i));
     }
-
-    //Channel analysis
-    int max_channel = 64;
-    int max_chip = 8;
-    TCanvas *c1 = new TCanvas("c1","c1",800,600);
-    TH2I *channel_chip = new TH2I ("channel_chip","channel_chip",max_channel,0,max_channel,max_chip,0,max_chip);
-    int mean =999999;
-    int std = 999999;
-     int count_cut = 0;
-    int count_post = 0;
-    double mean_post = 0;
-    double std_post = 0;
-    int bad_channel[max_chip][max_channel];
-    int n_bad_channel[max_chip];
-    int n_std=3;//it was 3
-    float charge_min = 2.5;
-    bool first_time=true;
-    TCut bad_ch = "";
-    TCut charge_cut = Form("charge_SH> %f && charge_SH<20",charge_min);
-    for(int i=0;i<max_chip;i++) n_bad_channel[i]=0;
-    tree->Draw("FEB_label+chip-1:channel>>channel_chip",charge_cut,"zcol");
-    c1->SaveAs("channel_chip.pdf(","pdf");    
-    while(1){
-      //cout<<"hello"<<endl;
-      for(int i=0;i<max_channel;i++){
-	for(int j=0;j<max_chip;j++){
-	  int tmp = channel_chip->GetBinContent(i+1,j+1);
+    if(test_chip_channel){
+      //Channel analysis
+      int max_channel = 64;
+      int max_chip = 8;
+      TCanvas *c1 = new TCanvas("c1","c1",800,600);
+      TH2I *channel_chip = new TH2I ("channel_chip","channel_chip",max_channel,0,max_channel,max_chip,0,max_chip);
+      int mean =999999;
+      int std = 999999;
+      int count_cut = 0;
+      int count_post = 0;
+      double mean_post = 0;
+      double std_post = 0;
+      int bad_channel[max_chip][max_channel];
+      int n_bad_channel[max_chip];
+      int n_std=3;//it was 3
+      float charge_min = 2.5;
+      bool first_time=true;
+      TCut bad_ch = "";
+      TCut charge_cut = Form("charge_SH> %f && charge_SH<20",charge_min);
+      for(int i=0;i<max_chip;i++) n_bad_channel[i]=0;
+      tree->Draw("FEB_label+chip-1:channel>>channel_chip",charge_cut,"zcol");
+      c1->SaveAs("channel_chip.pdf(","pdf");    
+      while(1){
+	//cout<<"hello"<<endl;
+	for(int i=0;i<max_channel;i++){
+	  for(int j=0;j<max_chip;j++){
+	    int tmp = channel_chip->GetBinContent(i+1,j+1);
 	  //cout<<i<<" "<<j<<" "<<tmp<<endl;
-	  if(tmp>mean+n_std*std) {
-	    //cout<<tmp<<" "<<mean+std<<" "<<i<<" "<<j<<endl;
-	    channel_chip->SetBinContent(i+1,j+1,0);
-	    //cout<<"Removed chip "<<j<<" channel "<<i<<endl;
-	    bad_channel[j][n_bad_channel[j]]=i;
-	    n_bad_channel[j]++;
-	    //bad_ch += Form("(FEB_label+chip-1!=%i)||(FEB_label+chip-1==%i&&channel!=%i)",j,j,i);
-	    //cout<<bad_ch<<endl;
-	    count_cut++;
+	    if(tmp>mean+n_std*std) {
+	      //cout<<tmp<<" "<<mean+std<<" "<<i<<" "<<j<<endl;
+	      channel_chip->SetBinContent(i+1,j+1,0);
+	      //cout<<"Removed chip "<<j<<" channel "<<i<<endl;
+	      bad_channel[j][n_bad_channel[j]]=i;
+	      n_bad_channel[j]++;
+	      //bad_ch += Form("(FEB_label+chip-1!=%i)||(FEB_label+chip-1==%i&&channel!=%i)",j,j,i);
+	      //cout<<bad_ch<<endl;
+	      count_cut++;
+	    }
+	    if(tmp && tmp<mean+n_std*std){
+	      mean_post+=tmp;
+	      count_post++;
+	    }   
 	  }
-	  if(tmp && tmp<mean+n_std*std){
-	    mean_post+=tmp;
-	    count_post++;
-	  }   
 	}
-      }
-      mean_post/=count_post;
-      for(int i=0;i<max_channel;i++){
-	for(int j=0;j<max_chip;j++){
+	mean_post/=count_post;
+	for(int i=0;i<max_channel;i++){
+	  for(int j=0;j<max_chip;j++){
 	  int tmp = channel_chip->GetBinContent(i+1,j+1);
 	  //cout<<i<<" "<<j<<" "<<tmp<<endl;
 	  if(tmp>0 && tmp<mean+n_std*std) {
 	    std_post+=pow(mean_post-tmp,2);
 	  }   
+	  }
 	}
+	std_post/=count_post;
+	std_post=sqrt(std_post);
+	//cout<<count_cut<<endl;
+	cout<<count_post<<" "<<mean_post<<" "<<std_post<<endl;
+	if(!count_cut && !first_time) break;
+	first_time=false;
+	count_cut=0;
+	mean=mean_post;
+	std=std_post;
+	count_post=0;
+	mean_post=0;
+	std_post=0;
       }
-      std_post/=count_post;
-      std_post=sqrt(std_post);
-      //cout<<count_cut<<endl;
-      cout<<count_post<<" "<<mean_post<<" "<<std_post<<endl;
-      if(!count_cut && !first_time) break;
-      first_time=false;
-      count_cut=0;
-      mean=mean_post;
-      std=std_post;
-      count_post=0;
-      mean_post=0;
-      std_post=0;
+      
+      
+      for(int j=0;j<max_chip;j++){
+	cout<<"chip "<<j<<" n_bad_ch "<<n_bad_channel[j]<<endl;
+	if(!n_bad_channel[j]) continue;
+	TString tmp_cut = Form("(FEB_label+chip-1!=%i)||(FEB_label+chip-1==%i",j,j);
+	for(int i=0;i<n_bad_channel[j];i++) tmp_cut +=Form("&&channel!=%i",bad_channel[j][i]);
+	tmp_cut +=")";
+	bad_ch += tmp_cut;
+      }
+      
+      
+
+      c1->SaveAs("channel_chip.pdf","pdf");
+      //cout<<charge_cut<<" "<<charge_min<<endl;
+      tree->Draw("charge_SH",charge_cut);
+      c1->SaveAs("channel_chip.pdf","pdf");
+      charge_cut += bad_ch;
+      //cout<<charge_cut<<endl;
+      tree->Draw("charge_SH",charge_cut);
+      c1->SaveAs("channel_chip.pdf)","pdf");
     }
-
-
-    for(int j=0;j<max_chip;j++){
-      cout<<"chip "<<j<<" n_bad_ch "<<n_bad_channel[j]<<endl;
-      if(!n_bad_channel[j]) continue;
-      TString tmp_cut = Form("(FEB_label+chip-1!=%i)||(FEB_label+chip-1==%i",j,j);
-      for(int i=0;i<n_bad_channel[j];i++) tmp_cut +=Form("&&channel!=%i",bad_channel[j][i]);
-      tmp_cut +=")";
-      bad_ch += tmp_cut;
-    }
-
-
-
-    c1->SaveAs("channel_chip.pdf","pdf");
-    //cout<<charge_cut<<" "<<charge_min<<endl;
-    tree->Draw("charge_SH",charge_cut);
-    c1->SaveAs("channel_chip.pdf","pdf");
-    charge_cut += bad_ch;
-    //cout<<charge_cut<<endl;
-    tree->Draw("charge_SH",charge_cut);
-    c1->SaveAs("channel_chip.pdf)","pdf");
-    return;
+    //return;
 
 
 
     auto ofile = new TFile(oname.c_str(),"RECREATE");
-    auto otree = new TTree("tree","tree");
+    otree = new TTree("tree","tree");
 
     int evtNo, nhits, ngemrocs, ntimestamp, runNo, ntcoarse_L1_TP, ntcoarse_L2_TP;
     float trigg_tcoarse;
@@ -198,7 +215,10 @@ void event(){
     otree->Branch("QDCcali_qmax",&tqmax,"tqmax[nhits]/f");// Q max value from DQC calibration curve for each hit
     otree->Branch("time",&ttime,"ttime[nhits]/f");// Q max value from DQC calibration curve for each hit
     otree->Branch("delta_coarse",&delta_coarse,"delta_coarse[nhits]/f");// Q max value from DQC calibration curve for each hit
-    
+    otree->Branch("TP_count", &TP_count, "TP_count[88]/I");
+    otree->Branch("TP_value", &TP_value, "TP_value[88]/I");
+    otree->Branch("TP_diff",  &TP_diff,  "TP_diff[88]/I");
+
     std::multimap<int, int>::iterator it = mevt.begin();
     int itcount = it->first;
     nhits = 0;
@@ -213,6 +233,7 @@ void event(){
 
     std::vector<int> vtcoarse_L1_TP;
     std::vector<int> vtcoarse_L2_TP;
+    for(int i=0; i<N_TIGER;i++) TP_count[i]=0;
 
     cout<<"Number of entries: "<<tree->GetEntries()<<endl;
     for (std::pair<int, int> elem : mevt){
@@ -239,6 +260,9 @@ void event(){
 	  //if(dstrip_v==-1&&dstrip_x==-1) continue; // some stripID are not properly setted at the present !!!
 	  
 	  //                                                                                                                                                                                                              
+	  //TEST ON TP
+	  TP_fill(dchannel,dFEB_label,dchip,dtcoarse);
+	  
 	  //check test pulse                                                                                                                                                                                              
 	  if(dlayer==1){
 	    //if(dchannel<36&&dchannel%7==0) vtcoarse_L1_TP.push_back(dtcoarse);                                                                                                                                        
@@ -311,6 +335,7 @@ void event(){
 	  vttrigg.clear();
 	  vtcoarse_L1_TP.clear();
 	  vtcoarse_L2_TP.clear();
+	  for(int i=0; i<N_TIGER;i++) TP_count[i]=0;
 	  continue;
 	}
 	else{
@@ -327,6 +352,7 @@ void event(){
 	    vgemrocs.clear();
 	    vtimestamp.clear();
 	    vttrigg.clear();
+	    for(int i=0; i<N_TIGER;i++) TP_count[i]=0;
 	    continue;
 	  }
 	  
@@ -357,7 +383,7 @@ void event(){
 	    //cout<<ttcoarse[i]<<" "<<ttfine[i]<<endl;
 	  }
 	}
-	
+	TP_test();    
 	evtNo++;
 	otree->Fill();
 	nhits=0;
@@ -368,12 +394,64 @@ void event(){
 	vtcoarse_L1_TP.clear();
 	vtcoarse_L2_TP.clear();
 	if(evtNo%100==0) std::cout<<"Evt. No.\t"<<evtNo<<std::endl;
-	if(evtNo>=1000000) break;
+	if(evtNo>=20000) break;
       }
-      
     }
-    
+    if(test_ROC_efficiency)TP_cout();    
     otree->Write();
     file->Close();
     ofile->Close();
+}
+
+
+void TP_fill(int ch, int feb, int ip, double t){
+  if(ch==20) {
+    int TIGER_ID = 2*feb;
+    if(ip==2) TIGER_ID++;
+    if(TIGER_ID<0 || TIGER_ID>N_TIGER){
+      cout<<"Error in the TP test with TIGER ID: "<<TIGER_ID<<endl;
+      return;
+    }
+    TP_count[TIGER_ID]++;
+    TP_value[TIGER_ID]=t;
+    //cout<<TIGER_ID<<" "<<TP_count[TIGER_ID]<<" "<<TP_value[TIGER_ID]<<endl;
+  }
+}
+
+void TP_test(){
+  if(TP_count[0]!=0) {
+    for(int i=0;i<32;i++){
+      TP_diff[i]=TP_value[i]-TP_value[0];
+    }
+  }
+  else {
+    for(int i=0;i<32;i++){
+      TP_diff[i]=-999;
+    }
+  }
+  if(TP_count[32]!=0) {
+    for(int i=32;i<N_TIGER;i++){
+      TP_diff[i]=TP_value[i]-TP_value[32];
+    }
+  }
+  else {
+    for(int i=32;i<N_TIGER;i++){
+      TP_diff[i]=-999;
+    }
+  }
+}
+
+void TP_cout(){
+  
+  for(int i=0;i<32;i++){
+    TString cut = Form("TP_diff[%d]==0",i);
+    TString cot = Form("TP_count[%d]!=0",i);
+    cout<<"TIGER "<<i<<": % in time "<<(double)(otree->GetEntries(cut))/otree->GetEntries("TP_count[0]")<<" and efficiency "<<(double)(otree->GetEntries(cot))/otree->GetEntries("")<<endl;
+  }
+  for(int i=32;i<N_TIGER;i++){
+    TString cut = Form("TP_diff[%d]==0",i);
+    TString cot = Form("TP_count[%d]!=0",i);
+    cout<<"TIGER "<<i<<": % in time "<<(double)(otree->GetEntries(cut))/otree->GetEntries("TP_count[32]")<<" and efficiency "<<(double)(otree->GetEntries(cot))/otree->GetEntries("")<<endl;
+  }
+  return;
 }

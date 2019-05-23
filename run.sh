@@ -19,21 +19,21 @@ fi
 
 rm Spill_*GEMROC*.* -f
 r=1
-ls ${DATADIR}
+#ls ${DATADIR}
 
 for ROC in `ls ${DATADIR}/Spill* | sed 's/^.\{,48\}//' | sed 's/.$//' | sed 's/.$//'| sed 's/.$//' | sed 's/.$//'   `
 do
-    echo ROC: ${ROC}
-    echo FILE: ${DATADIR}/Spill_$1_GEMROC_*.dat
+    #echo ROC: ${ROC}
+    #echo FILE: ${DATADIR}/Spill_$1_GEMROC_*.dat
     cp ${DATADIR}/Spill_$1_GEMROC_*.dat .
 
-    echo NOME: Spill_$1_GEMROC_${ROC}.dat
+    #echo NOME: Spill_$1_GEMROC_${ROC}.dat
     if [ -f "Spill_$1_GEMROC_${ROC}.dat" ]; then
-	#python Decode.py Spill_$1_GEMROC_${ROC}.dat ${ROC} 1 $r # triggermatch
-	python Decode.py Spill_$1_GEMROC_${ROC}.dat ${ROC} 0 $r #triggerless
+	python Decode.py Spill_$1_GEMROC_${ROC}.dat ${ROC} 1 $r # triggermatch
+	#python Decode.py Spill_$1_GEMROC_${ROC}.dat ${ROC} 0 $r #triggerless
     fi
 
-    ls
+    #ls
 done  
 hadd -f decode.root Spill_$1_GEMROC*root
 

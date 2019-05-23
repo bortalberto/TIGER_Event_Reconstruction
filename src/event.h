@@ -13,6 +13,11 @@
 
 using namespace std;
 void event();
+void TP_fill(int,int,int,double);
+void TP_test();
+void TP_cout();
+void exit_loop();
 int count_unique(std::vector<int> v);
 int count_diff(std::vector<int> v);
+
 #endif

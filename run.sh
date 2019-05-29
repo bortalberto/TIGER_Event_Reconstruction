@@ -1,5 +1,7 @@
-DATADIR="$HOME/data/raw_dat/$1"
-ANADIR="$HOME/data/raw_root/$1"
+#DATADIR="$HOME/data/raw_dat/$1"
+#ANADIR="$HOME/data/raw_root/$1"
+DATADIR="/dati/Data_CGEM_IHEP_Integration_2019/raw_dat/$1"
+ANADIR="/dati/Data_CGEM_IHEP_Integration_2019/raw_root/$1"
 HERE=$PWD
 
 if [ ! -d ${ANADIR} ]
@@ -21,7 +23,7 @@ rm Spill_*GEMROC*.* -f
 r=1
 #ls ${DATADIR}
 
-for ROC in `ls ${DATADIR}/Spill* | sed 's/^.\{,48\}//' | sed 's/.$//' | sed 's/.$//'| sed 's/.$//' | sed 's/.$//'   `
+for ROC in `ls ${DATADIR}/Spill* | sed 's/^.\{,65\}//' | sed 's/.$//' | sed 's/.$//'| sed 's/.$//' | sed 's/.$//'   `
 do
     #echo ROC: ${ROC}
     #echo FILE: ${DATADIR}/Spill_$1_GEMROC_*.dat
@@ -33,7 +35,7 @@ do
 	#python Decode.py Spill_$1_GEMROC_${ROC}.dat ${ROC} 0 $r #triggerless
     fi
 
-    #ls
+#   ls
 done  
 hadd -f decode.root Spill_$1_GEMROC*root
 

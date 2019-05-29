@@ -233,7 +233,7 @@ void ana(){
     pos_phi = mphi[dgemroc][dFEB][dchannel];
     chip = mchip_id[dgemroc][dFEB][dchannel];
     FEB_label = mFEB_label_id[dgemroc][dFEB][dchannel];
-    if(charge_SH_uncal > 1007) charge_SH = -1*(constant/slope);
+    if(charge_SH_uncal >= 1008) charge_SH = ((-1*constant)-(1024-charge_SH_uncal))/slope; //-1*(constant/slope);
     else charge_SH = (-1 * constant + charge_SH_uncal) / slope;
     
     if(tfine_uncal<150||tfine_uncal>600) continue;

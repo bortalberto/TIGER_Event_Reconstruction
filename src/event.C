@@ -1,24 +1,24 @@
 #include "event.h"
 
-const bool save_TP = true;
-const bool at_least_two_roc = false;
-const bool test_chip_channel = false;
-const bool test_ROC_efficiency = true;
+const bool save_TP             = true ;
+const bool at_least_two_roc    = false;
+const bool test_chip_channel   = false;
+const bool test_ROC_efficiency = true ;
+const bool DEBUG               = false;
 
-const int MAX_SIZE = 300;
-const int N_TIGER = 88;
-const int MAX_EVENT = 10000000;
-
-const bool DEBUG = 0;
+const int  MAX_SIZE   = 300;
+const int  N_TIGER    =  88;
+const int  MAX_EVENT  = 500;
+const int  TP_CHANNEL =   5;
 
 //In file variables
 int dchannel, dgemroc, dFEB, dcount, dtimestamp, dstrip_x, dstrip_v, dl1ts_min_tcoarse, dlasttigerframenum, dchip, dFEB_label, drunNo, dlayer, dtrigg_flag;
 float dcharge_SH, dpos_phi, dtcoarse, decoarse, dtfine, define, dttrigg, dtrigg_tcoarse, dconstant, dslope, dqmax, dtime, dradius, ddelta_coarse; 
 
 //TP test
-int TP_count[N_TIGER];
-int TP_value[N_TIGER];
-int TP_diff [N_TIGER];
+int TP_count[N_TIGER][TP_CHANNEL];
+int TP_value[N_TIGER][TP_CHANNEL];
+int TP_diff [N_TIGER][TP_CHANNEL];
 
 TTree *otree;
 
@@ -224,9 +224,9 @@ void event(){
 
     if(DEBUG) std::cout << "DEBUG::Just Saved all the vector branches" << std::endl;
 
-    otree->Branch("TP_count", &TP_count, "TP_count[88]/I");
-    otree->Branch("TP_value", &TP_value, "TP_value[88]/I");
-    otree->Branch("TP_diff",  &TP_diff,  "TP_diff[88]/I");
+    otree->Branch("TP_count", &TP_count, "TP_count[88][5]/I");
+    otree->Branch("TP_value", &TP_value, "TP_value[88][5]/I");
+    otree->Branch("TP_diff" , &TP_diff , "TP_diff[88][5]/I" );
 
     std::multimap<int, int>::iterator it = mevt.begin();
     int itcount = it->first;
@@ -242,14 +242,17 @@ void event(){
 
     std::vector<int> vtcoarse_L1_TP;
     std::vector<int> vtcoarse_L2_TP;
-    for(int i=0; i<N_TIGER;i++) TP_count[i]=0;
-
+    for(int i=0; i<N_TIGER;i++) {
+      for(int j=0; j<TP_CHANNEL;j++) {
+      TP_count[i][j]=0;
+      }
+    }
     cout<<"Number of entries: "<<tree->GetEntries()<<endl;
     for (std::pair<int, int> elem : mevt){
-      if(elem.second==0&&evtNo>2) break;
+      //if(elem.second==0&&evtNo>2) break; COMMENTED
       toohits=false;
       if(itcount==elem.first||nhits==0){ //an event collects all hits which have a same GEMROC LOCAL_COUNT number
-	if(toohits)continue;
+	//	if(toohits)continue;
 	
 	itcount = elem.first;
 	tree->GetEntry(elem.second);
@@ -272,7 +275,7 @@ void event(){
 	  
 	  //                                                                                                                                                                                                              
 	  //TEST ON TP
-	  TP_fill(dchannel,dFEB_label,dchip,dtcoarse);
+	  TP_fill(dchannel, dFEB_label, dchip, dtcoarse);
 	  
 	  //check test pulse                                                                                                                                                                                              
 	  if(dlayer==1){
@@ -322,32 +325,6 @@ void event(){
 
 	  if(DEBUG) std::cout << "DEBUG::Finished to push_back" << std::endl;
 	  
-	  /*
-	  tcount[nhits] = dcount;
-	  tlayer[nhits] = dlayer;
-	  tchannel[nhits] = dchannel;
-	  tgemroc[nhits] = dgemroc;
-	  tFEB[nhits] = dFEB;
-	  ttimestamp[nhits] = dtimestamp;
-	  tcharge_SH[nhits] = dcharge_SH;
-	  tpos_phi[nhits] = dpos_phi;
-	  tradius[nhits] = dradius;
-	  tstrip_x[nhits] = dstrip_x;
-	  tstrip_v[nhits] = dstrip_v;
-	  ttcoarse[nhits] = dtcoarse;
-	  tecoarse[nhits] = decoarse;
-	  ttfine[nhits] = dtfine;
-	  tchip[nhits] = dchip;
-	  tFEB_label[nhits] = dFEB_label;
-	  tefine[nhits] = define;
-	  tl1ts_min_tcoarse[nhits] = dl1ts_min_tcoarse;
-	  tconstant[nhits] = dconstant;
-	  tslope[nhits] = dslope;
-	  tqmax[nhits] = dqmax;
-	  tquality[nhits] = 0;
-	  ttime[nhits] = dtime;
-	  delta_coarse[nhits] = ddelta_coarse;
-	  */
 	  ////tag tquality
 	  //if(dFEB_label==10&&dchip==2) tquality[nhits] = 1;
 	  //if(dFEB_label==13&&dchip==1) tquality[nhits] = 1;
@@ -376,7 +353,11 @@ void event(){
 	  vttrigg.clear();
 	  vtcoarse_L1_TP.clear();
 	  vtcoarse_L2_TP.clear();
-	  for(int i=0; i<N_TIGER;i++) TP_count[i]=0;
+	  for(int i=0; i<N_TIGER;i++) {
+	    for(int j=0; j<TP_CHANNEL;j++) {
+	      TP_count[i][j]=0;
+	    }
+	  }
 	  continue;
 	}
 	else{
@@ -393,7 +374,12 @@ void event(){
 	    vgemrocs.clear();
 	    vtimestamp.clear();
 	    vttrigg.clear();
-	    for(int i=0; i<N_TIGER;i++) TP_count[i]=0;
+
+	    for(int i=0; i<N_TIGER;i++) {
+	      for(int j=0; j<TP_CHANNEL;j++) {
+		TP_count[i][j]=0;
+	      }
+	    }
 	    continue;
 	  }
 	  
@@ -430,6 +416,12 @@ void event(){
 	otree->Fill();
 
 	if(evtNo%100==0) std::cout << "Evt. No.\t" << evtNo << " \t & nHits\t" << nhits << std::endl;
+
+	for(int i=0; i<N_TIGER;i++) {
+	  for(int j=0; j<TP_CHANNEL;j++) {
+	    TP_count[i][j]=0;
+	  }
+	}
 
 	nhits=0;
 	trigg_tcoarse = -9999;
@@ -482,53 +474,102 @@ void event(){
 
 
 void TP_fill(int ch, int feb, int ip, double t){
-  if(ch==20) {
-    int TIGER_ID = 2*feb;
-    if(ip==2) TIGER_ID++;
-    if(TIGER_ID<0 || TIGER_ID>N_TIGER){
-      cout<<"Error in the TP test with TIGER ID: "<<TIGER_ID<<endl;
-      return;
+
+  int TIGER_ID = 2*feb;
+  if(ip==2) TIGER_ID++;
+  if(TIGER_ID<0 || TIGER_ID>N_TIGER){
+    cout<<"Error in the TP test with TIGER ID: "<<TIGER_ID<<endl;
+    return;
+  }
+  for(int chID=0; chID < TP_CHANNEL; chID++) {
+    if(ch == (chID+1)*5) {
+      TP_count[TIGER_ID][chID]++;
+      TP_value[TIGER_ID][chID]=t;
+      if(DEBUG) std::cout << "chID \t" << ch << "\t TIGER_ID \t" << TIGER_ID << "\t TP_COUNT \t" << TP_count[TIGER_ID] << "\t TP_value \t" << TP_value[TIGER_ID] << std::endl;
     }
-    TP_count[TIGER_ID]++;
-    TP_value[TIGER_ID]=t;
-    //cout<<TIGER_ID<<" "<<TP_count[TIGER_ID]<<" "<<TP_value[TIGER_ID]<<endl;
   }
 }
 
 void TP_test(){
-  if(TP_count[0]!=0) {
-    for(int i=0;i<32;i++){
-      TP_diff[i]=TP_value[i]-TP_value[0];
+
+  for(int chID=0; chID < TP_CHANNEL; chID++) {
+    
+    if(TP_count[0][chID]!=0) {
+      for(int i=0;i<32;i++){
+	TP_diff[i][chID]=TP_value[i][chID]-TP_value[0][chID];
+      }
     }
-  }
-  else {
-    for(int i=0;i<32;i++){
-      TP_diff[i]=-999;
+    else {
+      for(int i=0;i<32;i++){
+	TP_diff[i][chID]=-999;
+      }
     }
-  }
-  if(TP_count[32]!=0) {
-    for(int i=32;i<N_TIGER;i++){
-      TP_diff[i]=TP_value[i]-TP_value[32];
+    if(TP_count[32][chID]!=0) {
+      for(int i=32;i<N_TIGER;i++){
+	TP_diff[i][chID]=TP_value[i][chID]-TP_value[32][chID];
+      }
     }
-  }
-  else {
-    for(int i=32;i<N_TIGER;i++){
-      TP_diff[i]=-999;
+    else {
+      for(int i=32;i<N_TIGER;i++){
+	TP_diff[i][chID]=-999;
+      }
     }
-  }
+
+  } // for TP_CHANNEL loop
 }
 
 void TP_cout(){
+
+  TString cut;
+  TString cot;
+  TString baseT;
+  bool NOch[TP_CHANNEL]; for(int chID=0; chID < TP_CHANNEL; chID++) NOch[TP_CHANNEL] = false;
+
+  double eff_T[N_TIGER][TP_CHANNEL], eff[N_TIGER][TP_CHANNEL], eff_Tot_T[N_TIGER], eff_Tot[N_TIGER];
   
-  for(int i=0;i<32;i++){
-    TString cut = Form("TP_diff[%d]==0",i);
-    TString cot = Form("TP_count[%d]!=0",i);
-    cout<<"TIGER "<<i<<": % in time "<<(double)(otree->GetEntries(cut))/otree->GetEntries("TP_count[0]")<<" and efficiency "<<(double)(otree->GetEntries(cot))/otree->GetEntries("")<<endl;
+  for(int chID=0; chID < TP_CHANNEL; chID++) {  
+    for(int i=0;i<32;i++){
+      cut   = Form("TP_diff[%d][%d]==0" , i, chID);
+      cot   = Form("TP_count[%d][%d]!=0", i, chID);
+      baseT = Form("TP_count[0][%d]"       , chID);
+
+      eff_T[i][chID] = (double)(otree->GetEntries(cut))/(double)(otree->GetEntries(baseT));
+      eff[i][chID]   = (double)(otree->GetEntries(cot))/(double)(otree->GetEntries(""));
+      if(otree->GetEntries(baseT) == 0) NOch[chID] = true;
+
+      if(DEBUG) {
+	std::cout << "TIGER \t" << i << " " << otree->GetEntries(cut) << " " << otree->GetEntries("TP_count[0]") << std::endl;
+	std::cout << "TIGER \t" << i << " " << otree->GetEntries(cot) << " " << otree->GetEntries("")            << std::endl;
+        std::cout << "channel \t" << (chID+1)*5 << " & TIGER \t" << i << ": in time \t" << ((double)(otree->GetEntries(cut))/(double)(otree->GetEntries(baseT)))*100. << "% \t and efficiency \t" << ((double)(otree->GetEntries(cot))/(double)(otree->GetEntries("")))*100. << "%" << std::endl;
+      }
+    }
+    for(int i=32;i<N_TIGER;i++){
+      cut   = Form("TP_diff[%d][%d]==0" , i, chID);
+      cot   = Form("TP_count[%d][%d]!=0", i, chID);
+      baseT = Form("TP_count[32][%d]"      , chID);
+
+      eff_T[i][chID] = (double)(otree->GetEntries(cut))/(double)(otree->GetEntries(baseT));
+      eff[i][chID]   = (double)(otree->GetEntries(cot))/(double)(otree->GetEntries(""));
+      
+      if(DEBUG) {
+	std::cout << "TIGER \t" << i << " " << otree->GetEntries(cut) << " " << otree->GetEntries("TP_count[32]") << std::endl;
+	std::cout << "TIGER \t" << i << " " << otree->GetEntries(cot) << " " << otree->GetEntries("")             << std::endl;
+	std::cout << "channel \t" << (chID+1)*5  << " & TIGER \t" << i << ": in time \t" << ((double)(otree->GetEntries(cut))/(double)(otree->GetEntries(baseT)))*100. << "% \t and efficiency \t" << ((double)(otree->GetEntries(cot))/(double)(otree->GetEntries("")))*100. << "%" << std::endl;
+      }
+    }
+    std::cout << "\n" << std::endl;
   }
-  for(int i=32;i<N_TIGER;i++){
-    TString cut = Form("TP_diff[%d]==0",i);
-    TString cot = Form("TP_count[%d]!=0",i);
-    cout<<"TIGER "<<i<<": % in time "<<(double)(otree->GetEntries(cut))/otree->GetEntries("TP_count[32]")<<" and efficiency "<<(double)(otree->GetEntries(cot))/otree->GetEntries("")<<endl;
-  }
+
+  for(int i=0;i<N_TIGER;i++){
+    eff_Tot_T[i] = 1.;
+    eff_Tot[i]   = 1.;
+    for(int chID=0; chID < TP_CHANNEL; chID++) {
+      if(NOch[chID]) continue;
+      eff_Tot_T[i] *= eff_T[i][chID];
+      eff_Tot[i]   *= eff[i][chID]  ;
+    }
+      std::cout << "TIGER \t" << i << ": in time \t" << eff_Tot_T[i]*100. << "% \t and efficiency \t" << eff_Tot[i]*100. << "%" << std::endl;
+    }
+  
   return;
 }

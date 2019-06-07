@@ -3,12 +3,12 @@
 const bool save_TP             = true ;
 const bool at_least_two_roc    = false;
 const bool test_chip_channel   = false;
-const bool test_ROC_efficiency = true ;
+const bool test_ROC_efficiency = false;
 const bool DEBUG               = false;
 
 const int  MAX_SIZE   = 300;
 const int  N_TIGER    =  88;
-const int  MAX_EVENT  = 500;
+const int  MAX_EVENT  = 999999;
 const int  TP_CHANNEL =   5;
 
 //In file variables
@@ -85,7 +85,7 @@ void event(){
     if(test_chip_channel){
       //Channel analysis
       int max_channel = 64;
-      int max_chip = 8;
+      int max_chip = 45;
       TCanvas *c1 = new TCanvas("c1","c1",800,600);
       TH2I *channel_chip = new TH2I ("channel_chip","channel_chip",max_channel,0,max_channel,max_chip,0,max_chip);
       int mean =999999;
@@ -100,9 +100,9 @@ void event(){
       float charge_min = 2.5;
       bool first_time=true;
       TCut bad_ch = "";
-      TCut charge_cut = Form("charge_SH> %f && charge_SH<20",charge_min);
+      TCut charge_cut = Form("charge_SH> %f && charge_SH<20 && channel!=20 && strip_x>0",charge_min);
       for(int i=0;i<max_chip;i++) n_bad_channel[i]=0;
-      tree->Draw("FEB_label+chip-1:channel>>channel_chip",charge_cut,"zcol");
+      tree->Draw("FEB_label*2+chip-1:channel>>channel_chip",charge_cut,"zcol");
       c1->SaveAs("channel_chip.pdf(","pdf");    
       while(1){
 	//cout<<"hello"<<endl;
@@ -113,7 +113,7 @@ void event(){
 	    if(tmp>mean+n_std*std) {
 	      //cout<<tmp<<" "<<mean+std<<" "<<i<<" "<<j<<endl;
 	      channel_chip->SetBinContent(i+1,j+1,0);
-	      //cout<<"Removed chip "<<j<<" channel "<<i<<endl;
+	      cout<<"Removed chip "<<j<<" channel "<<i<<endl;
 	      bad_channel[j][n_bad_channel[j]]=i;
 	      n_bad_channel[j]++;
 	      //bad_ch += Form("(FEB_label+chip-1!=%i)||(FEB_label+chip-1==%i&&channel!=%i)",j,j,i);
@@ -161,14 +161,16 @@ void event(){
       }
       
       
-
+      TH1D *h = new TH1D ("h","h",100,0,20);
       c1->SaveAs("channel_chip.pdf","pdf");
       //cout<<charge_cut<<" "<<charge_min<<endl;
-      tree->Draw("charge_SH",charge_cut);
+      tree->Draw("charge_SH>>h",charge_cut);
+      cout<<"Mean charge beofre cut: "<<h->GetMean()<<endl;
       c1->SaveAs("channel_chip.pdf","pdf");
       charge_cut += bad_ch;
       //cout<<charge_cut<<endl;
-      tree->Draw("charge_SH",charge_cut);
+      tree->Draw("charge_SH>>h",charge_cut);
+      cout<<"Mean charge after cut: "<<h->GetMean()<<endl;
       c1->SaveAs("channel_chip.pdf)","pdf");
     }
     //return;

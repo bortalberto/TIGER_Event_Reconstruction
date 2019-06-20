@@ -1,10 +1,12 @@
 #include "ana.h"
-void ana(){
+void ana(int run, int subrun){
+  std::string iname=ANADIR;
+  iname=iname+std::to_string(run)+"/Sub_RUN_dec_"+std::to_string(subrun)+".root";
+  std::string oname=ANADIR;
+  oname=oname+std::to_string(run)+"/Sub_RUN_ana_"+std::to_string(subrun)+".root";
 
-  bool save_TP = true;
-  std::string iname="decode.root";
-  std::string oname="ana.root";
   int trigg_channel=20;
+  bool save_TP = true;
   //int trigg_FEB=4;
   //int trigg_gemroc=4;
   auto mapfile = new TFile("mapping_IHEP.root");

@@ -1,0 +1,119 @@
+ANADIR="/dati/Data_CGEM_IHEP_Integration_2019/raw_root/$1"
+HERE=$PWD
+NROC=11
+
+if [ ! -d ${ANADIR} ]
+then
+    mkdir ${ANADIR}
+else
+    rm -f ${ANADIR}/Spill*.root
+    rm -f ${ANADIR}/event.root
+    rm -f ${ANADIR}/ana.root
+    rm -f ${ANADIR}/log
+fi
+
+#if [ ! -f "${DATADIR}/file_list" ]; then
+#    echo "cannot find \"file_list\" in ${DATADIR}"
+#    return;
+#fi
+
+rm Spill_*GEMROC*.* -f
+r=1
+#ls ${DATADIR}
+if [[ $1 -lt 88 ]]; then
+    DATADIR="/dati/Data_CGEM_IHEP_Integration_2019/raw_dat/$1"
+    for ROC in `ls ${DATADIR}/Spill* | sed 's/^.\{,65\}//' | sed 's/.$//' | sed 's/.$//'| sed 's/.$//' | sed 's/.$//'   `
+    do
+	#echo ROC: ${ROC}
+	#echo FILE: ${DATADIR}/Spill_$1_GEMROC_*.dat
+	cp ${DATADIR}/Spill_$1_GEMROC_*.dat .
+	
+	#echo NOME: Spill_$1_GEMROC_${ROC}.dat
+	if [ -f "Spill_$1_GEMROC_${ROC}.dat" ]; then
+	    python Decode.py Spill_$1_GEMROC_${ROC}.dat ${ROC} 1 $r # triggermatch
+	    #python Decode.py Spill_$1_GEMROC_${ROC}.dat ${ROC} 0 $r #triggerless
+	fi
+	
+	#   ls
+    done  
+    hadd -f decode.root Spill_$1_GEMROC*root
+    ./bin/ana
+    ./bin/event
+    ./bin/post_event
+ 
+    mv decode.root ${ANADIR}/Spill_$1_decode.root
+    mv ana.root ${ANADIR}/Spill_$1_ana.root
+    mv event.root ${ANADIR}/Spill_$1_event.root
+    mv channel_chip.pdf ${ANADIR}/.
+    echo "RunNo. $r\t${ROC}*" >> ${ANADIR}/log
+
+    rm Spill_*GEMROC*.* -f
+
+fi
+if [[ $1 -gt 88 ]]; then
+    DATADIR="/dati/Data_CGEM_IHEP_Integration_2019/raw_dat/RUN_$1"
+    #ls ${DATADIR}/SubRUN*
+    #for ROC in `ls ${DATADIR}/SubRUN* | sed 's/^.\{,69\}//' | sed 's/.$//' | sed 's/.$//'| sed 's/.$//' | sed 's/.$//'  | sed 's/.$//' | sed 's/.$//' | sed 's/.$//' `
+    for i in {0..2}
+    do
+	# Begin the loop on hte subrun
+	ts -K
+	count=0
+	for ROC in $(seq 0 $NROC);
+	do
+	    # Begin the loop on the ROC
+            echo ROC: ${ROC}  
+	    echo sub: ${i}
+            #echo FILE: ${DATADIR}/SubRUN_${i}_GEMROC_*.dat  
+            #echo NOME: SubRUN_${i}_GEMROC_${ROC}_TM.dat 
+            if [ -f "${DATADIR}/SubRUN_${i}_GEMROC_${ROC}_TM.dat" ]; then
+		#echo ok
+		#echo decode SubRUN_${i}_GEMROC_${ROC}_TM.dat
+		#cp ${DATADIR}/SubRUN_${i}_GEMROC_${ROC}_TM.dat .
+		ts bash -c "python Decode.py ${DATADIR}/SubRUN_${i}_GEMROC_${ROC}_TM.dat ${ROC} 1 $r" # triggermatch 
+                #python Decode.py ${DATADIR}/SubRUN_${i}_GEMROC_${ROC}_TL.dat ${ROC} 1 $r # triggerless     
+		count=`expr $count + 1`
+		total_count=`expr $total_count + 1`
+	    fi
+	done
+	ts -S $NROC
+	ts -N $count sleep 0.001
+	ts -w 
+	echo $count
+	ls ${DATADIR}/*.root
+	echo "SubRUN_${i}_GEMROC_*_TM.root"
+	#if [ -f "${DATADIR}/SubRUN_${i}_GEMROC_0_TM.root" ]; then
+	if [[ $count -gt 0 ]]; then
+	    ts bash -c "
+	    echo 'Hello'
+            #hadd -f ${DATADIR}/decode.root ${DATADIR}/SubRUN_${i}_GEMROC*root
+ 	    hadd -f ${ANADIR}/Sub_RUN_dec_${i}.root ${DATADIR}/SubRUN_${i}_GEMROC*root
+	    echo 'Begin ana'
+            #./bin/ana ${DATADIR}
+	    ./bin/ana $1 $i
+	    echo 'Begin evt'
+            #./bin/event ${DATADIR}
+	    ./bin/event $1 $i
+	    #./bin/post_event ${DATADIR}
+	    ./bin/post_event $1 $i
+            #mv ${DATADIR}/decode.root      ${ANADIR}/Sub_RUN_dec_${i}.root
+            #mv ${DATADIR}/ana.root         ${ANADIR}/Sub_RUN_ana_${i}.root
+            #mv ${DATADIR}/event.root       ${ANADIR}/Sub_RUN_event_${i}.root
+	    #mv ${DATADIR}/post_event.root  ${ANADIR}/Sub_RUN_post_event_${i}.root
+            mv -f channel_chip.pdf ${ANADIR}/.
+            mv -f ${DATADIR}/SubRUN_${i}*root ${ANADIR}/. "
+            echo "RunNo. $r\t${ROC}*" >> ${ANADIR}/log
+            #rm Spill_*GEMROC*.* -f
+            #rm SubRUN_* -f
+	fi
+    done
+    cd ${ANADIR}
+    rm ${DATADIR}/event.root
+    hadd -f ${ANADIR}/event.root ${ANADIR}/Sub_RUN_post_event*root
+    cd -
+    rm *.dat
+fi
+
+echo "Finish"
+
+cd $HERE

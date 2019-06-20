@@ -1,5 +1,7 @@
 ANADIR="/dati/Data_CGEM_IHEP_Integration_2019/raw_root/$1"
 HERE=$PWD
+NROC=11
+NSUB=3000
 
 if [ ! -d ${ANADIR} ]
 then
@@ -38,6 +40,7 @@ if [[ $1 -lt 88 ]]; then
     hadd -f decode.root Spill_$1_GEMROC*root
     ./bin/ana
     ./bin/event
+    ./bin/post_event
  
     mv decode.root ${ANADIR}/Spill_$1_decode.root
     mv ana.root ${ANADIR}/Spill_$1_ana.root
@@ -50,40 +53,46 @@ if [[ $1 -lt 88 ]]; then
 fi
 if [[ $1 -gt 88 ]]; then
     DATADIR="/dati/Data_CGEM_IHEP_Integration_2019/raw_dat/RUN_$1"
-    #ls ${DATADIR}/SubRUN*
-    #for ROC in `ls ${DATADIR}/SubRUN* | sed 's/^.\{,69\}//' | sed 's/.$//' | sed 's/.$//'| sed 's/.$//' | sed 's/.$//'  | sed 's/.$//' | sed 's/.$//' | sed 's/.$//' `
-    for i in {0..100}
+    count=0
+    for i in $(seq 0 $NSUB);
     do
-	for ROC in {0..20}
+	# Begin the loop on hte subrun
+	for ROC in $(seq 0 $NROC);
 	do
+	    # Begin the loop on the ROC
             echo ROC: ${ROC}  
 	    echo sub: ${i}
-            #echo FILE: ${DATADIR}/SubRUN_${i}_GEMROC_*.dat  
-            #echo NOME: SubRUN_${i}_GEMROC_${ROC}_TM.dat 
             if [ -f "${DATADIR}/SubRUN_${i}_GEMROC_${ROC}_TM.dat" ]; then
-		#echo ok
-		#echo decode SubRUN_${i}_GEMROC_${ROC}_TM.dat
-		cp ${DATADIR}/SubRUN_${i}_GEMROC_${ROC}_TM.dat .
-		python Decode.py SubRUN_${i}_GEMROC_${ROC}_TM.dat ${ROC} 1 $r # triggermatch 
-		#python Decode.py Spill_$1_GEMROC_${ROC}.dat ${ROC} 0 $r #triggerless  
-	    fi 
+		ts bash -c "python Decode.py ${DATADIR}/SubRUN_${i}_GEMROC_${ROC}_TM.dat ${ROC} 1 $r" # triggermatch 
+                #python Decode.py ${DATADIR}/SubRUN_${i}_GEMROC_${ROC}_TL.dat ${ROC} 1 $r # triggerless     
+		count=`expr $count + 1`
+	    fi
 	done
-	hadd -f decode.root SubRUN_*_GEMROC*root
-        ./bin/ana
-        ./bin/event
-        mv decode.root      ${ANADIR}/.
-        mv ana.root         ${ANADIR}/Sub_RUN_ana_${i}.root
-        mv event.root       ${ANADIR}/Sub_RUN_event_${i}.root
-        mv channel_chip.pdf ${ANADIR}/.
-        mv SubRUN*root      ${ANADIR}/.
-        echo "RunNo. $r\t${ROC}*" >> ${ANADIR}/log
-        rm Spill_*GEMROC*.* -f
-        rm SubRUN_* -f
     done
-    cd ${ANADIR}
-    rm event.root
-    hadd -f event.root Sub_RUN_event*root
-    cd -
+    ts -S 20
+    ts -N 20 bash -c "sleep 0.0001"
+    ts -w
+    for i in $(seq 0 $NSUB);
+    do
+	echo "SubRUN_${i}_GEMROC_*_TM.root"
+	if [ -f "${DATADIR}/SubRUN_${i}_GEMROC_0_TM.root" ]; then
+	#if [[ $count -gt 0 ]]; then
+	    ts bash -c "
+	    echo 'Hello'
+ 	    hadd -f ${ANADIR}/Sub_RUN_dec_${i}.root ${DATADIR}/SubRUN_${i}_GEMROC*root
+	    echo 'Begin ana'
+	    ./bin/ana $1 $i
+	    echo 'Begin evt'
+	    ./bin/event $1 $i
+	    ./bin/post_event $1 $i
+            mv -f ${DATADIR}/SubRUN_${i}*root ${ANADIR}/. "
+	    count=`expr $count + 1`
+	fi
+    done
+    ts -S 20
+    ts -N 20 bash -c "sleep 0.0001"
+    ts -w
+    hadd -f ${ANADIR}/event.root ${ANADIR}/Sub_RUN_post_event*root
 fi
 
 echo "Finish"

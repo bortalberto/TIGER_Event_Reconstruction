@@ -10,9 +10,10 @@
 #include "TH2F.h"
 #include "TCut.h"
 #include <map>
+#include "common.h"
 
 using namespace std;
-void event();
+void event(int,int);
 void TP_fill(int,int,int,double);
 void TP_test();
 void TP_cout();

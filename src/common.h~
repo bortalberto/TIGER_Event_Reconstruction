@@ -1,0 +1,7 @@
+#ifndef common_h
+#define common_h
+using namespace std;
+
+const string anadir = "/dati/Data_CGEM_IHEP_Integration_2019/raw_root/";
+
+#endif

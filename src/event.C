@@ -6,9 +6,9 @@ const bool test_chip_channel   = false;
 const bool test_ROC_efficiency = false;
 const bool DEBUG               = false;
 
-const int  MAX_SIZE   = 300;
+const int  MAX_SIZE   = 500;
 const int  N_TIGER    =  88;
-const int  MAX_EVENT  = 999999;
+const int  MAX_EVENT  = 10000;
 const int  TP_CHANNEL =   5;
 
 //In file variables
@@ -37,9 +37,12 @@ int count_diff(std::vector<int> v){
     return fabs(v.back() - v.front());
 }
 
-void event(){
-  std::string iname="ana.root";
-  std::string oname="event.root";
+void event(int run, int subrun){
+  std::string iname=ANADIR;
+  iname=iname+std::to_string(run)+"/Sub_RUN_ana_"  +std::to_string(subrun)+".root";
+  std::string oname=ANADIR;
+  oname=oname+std::to_string(run)+"/Sub_RUN_event_"+std::to_string(subrun)+".root";
+  
   
   bool toohits = false;
     auto file = new TFile(iname.c_str());
@@ -96,7 +99,7 @@ void event(){
       double std_post = 0;
       int bad_channel[max_chip][max_channel];
       int n_bad_channel[max_chip];
-      int n_std=3;//it was 3
+      int n_std=3; // it was 3
       float charge_min = 2.5;
       bool first_time=true;
       TCut bad_ch = "";

@@ -1,7 +1,7 @@
 ANADIR="/dati/Data_CGEM_IHEP_Integration_2019/raw_root/$1"
 HERE=$PWD
 NROC=11
-NSUB=3000
+NSUB=10
 
 if [ ! -d ${ANADIR} ]
 then

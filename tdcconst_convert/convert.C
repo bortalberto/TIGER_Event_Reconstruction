@@ -10,7 +10,7 @@ void convert(){
     auto tree = new TTree("tree","tree");
 
     for(int layer_id = 1; layer_id <4; layer_id++){
-	for(int tig_id=0; tig_id<50; tig_id++){
+	for(int tig_id=0; tig_id<60; tig_id++){
 	    for(int chip_id=1; chip_id<3; chip_id++){
 		std::string data_folder = Form("L%i/",layer_id);
 		std::string FILENAME = Form("L%iFEB%i_c%i_TDCscan.tdc",layer_id,tig_id,chip_id);
@@ -52,7 +52,7 @@ void convert(){
 		    if(layer_id==1){
 			if(tig_id==5)  FEB_label = 0;
                         else if(tig_id==20) FEB_label = 1;
-                        else if(tig_id==6) FEB_label = 2; // old: 6;  new:12
+                        else if(tig_id==6) FEB_label = 2; // fake config file
                         else if(tig_id==13) FEB_label = 3;
                         else if(tig_id==14) FEB_label = 4;
                         else if(tig_id==3)  FEB_label = 5;
@@ -94,7 +94,7 @@ void convert(){
                         else if(tig_id==12) FEB_label = 38;
                         else if(tig_id==7) FEB_label = 39;
                         else if(tig_id==20) FEB_label = 40;
-                        else if(tig_id==21) FEB_label = 41;
+                        else if(tig_id==21) FEB_label = 41; //fake config file
                         else if(tig_id==24) FEB_label = 42;
                         else if(tig_id==3) FEB_label = 43;
                         else continue;

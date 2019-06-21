@@ -40,11 +40,11 @@ void QDCconvert(){
 		    if(layer_id==1){
 			if(tig_id==5)  FEB_label = 0;
 			else if(tig_id==20) FEB_label = 1;
-			else if(tig_id==6)  FEB_label = 6; // fake calibration file
+			else if(tig_id==6)  FEB_label = 2; 
 			else if(tig_id==13) FEB_label = 3;
 			else if(tig_id==14) FEB_label = 4;
 			else if(tig_id==3)  FEB_label = 5;
-			else if(tig_id==18) FEB_label = 6;
+			else if(tig_id==18) FEB_label = 6; // fake calibration file
 			else if(tig_id==19) FEB_label = 7;
 			else if(tig_id==24) FEB_label = 8;
 			else if(tig_id==11) FEB_label = 9;

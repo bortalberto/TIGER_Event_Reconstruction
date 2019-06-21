@@ -6,6 +6,7 @@ void ana(int run, int subrun){
   oname=oname+std::to_string(run)+"/Sub_RUN_ana_"+std::to_string(subrun)+".root";
 
   int trigg_channel=20;
+  if(run>=118) trigg_channel=62;
   bool save_TP = true;
   //int trigg_FEB=4;
   //int trigg_gemroc=4;

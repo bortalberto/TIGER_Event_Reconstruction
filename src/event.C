@@ -11,6 +11,9 @@ const int  N_TIGER    =  88;
 const int  MAX_EVENT  = 10000;
 const int  TP_CHANNEL =   5;
 
+int trigg_channel = 20;
+if(run>=118) trigg_channel=62;
+
 //In file variables
 int dchannel, dgemroc, dFEB, dcount, dtimestamp, dstrip_x, dstrip_v, dl1ts_min_tcoarse, dlasttigerframenum, dchip, dFEB_label, drunNo, dlayer, dtrigg_flag;
 float dcharge_SH, dpos_phi, dtcoarse, decoarse, dtfine, define, dttrigg, dtrigg_tcoarse, dconstant, dslope, dqmax, dtime, dradius, ddelta_coarse; 
@@ -103,7 +106,7 @@ void event(int run, int subrun){
       float charge_min = 2.5;
       bool first_time=true;
       TCut bad_ch = "";
-      TCut charge_cut = Form("charge_SH> %f && charge_SH<20 && channel!=20 && strip_x>0",charge_min);
+      TCut charge_cut = Form("charge_SH> %f && charge_SH<20 && channel!= %d && strip_x>0",charge_min,trigg_channel);
       for(int i=0;i<max_chip;i++) n_bad_channel[i]=0;
       tree->Draw("FEB_label*2+chip-1:channel>>channel_chip",charge_cut,"zcol");
       c1->SaveAs("channel_chip.pdf(","pdf");    
@@ -285,18 +288,18 @@ void event(int run, int subrun){
 	  //check test pulse                                                                                                                                                                                              
 	  if(dlayer==1){
 	    //if(dchannel<36&&dchannel%7==0) vtcoarse_L1_TP.push_back(dtcoarse);                                                                                                                                        
-	    if(dchannel==20) vtcoarse_L1_TP.push_back(dtcoarse);
+	    if(dchannel==trigg_channel) vtcoarse_L1_TP.push_back(dtcoarse);
 	  }
 	  if(dlayer==2){
 	    //if(dchannel==20) vtcoarse_L2_TP.push_back(dtcoarse);                                                                                                                                                      
-	    if(dchannel==20) vtcoarse_L2_TP.push_back(dtcoarse);
+	    if(dchannel==trigg_channel) vtcoarse_L2_TP.push_back(dtcoarse);
 	  }
 	  
 	  vgemrocs.push_back(dgemroc);
 	  vtimestamp.push_back(dtimestamp);
 	  
 	  //To speed up the code the TP is not saved
-	  if(!save_TP && dchannel== 20) continue;
+	  if(!save_TP && dchannel == trigg_channel) continue;
 	  
 	  //Check if there are BAD event due to ROC problem --> S/H only !!!
 	  if(ddelta_coarse!=22 && ddelta_coarse!=21) continue;

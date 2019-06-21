@@ -1,6 +1,8 @@
 #include "post_event.h"
 
 const int n_chip = 100;
+int trigg_channel = 20;
+if(run>=118) trigg_channel=62;
 
 double s_TriggerTime;
 unsigned int s_size;
@@ -56,7 +58,7 @@ void post_event(int run, int subrun){
     //Fill the TP
     float TP[n_chip] = {-1};
     for(int j=0;j<s_size;j++){
-      if(v_channel->at(j) == 20 && v_header->at(j) > -1) {
+      if(v_channel->at(j) == trigg_channel && v_header->at(j) > -1) {
 	TP[v_header->at(j)] = v_ttrigg->at(j);
 	//cout<<"TP{"<<v_header->at(j)<<"] "<<TP[v_header->at(j)] <<endl;
       }
@@ -64,7 +66,7 @@ void post_event(int run, int subrun){
 
     //Measure the tcoarse - TP of the same chip
     for(int j=0;j<s_size;j++){
-      if(v_channel->at(j) != 20 && v_header->at(j) > -1) {
+      if(v_channel->at(j) != trigg_channel && v_header->at(j) > -1) {
 	bool TP_is_good = abs( v_evttime->at(j) - ( v_ttrigg->at(j) - TP[v_header->at(j)] ) )<30;
 	bool TP_is_the_same = abs( v_evttime->at(j) - ( v_ttrigg->at(j) - TP[v_header->at(j)] ) );
 	if(TP[v_header->at(j)] != -1 && TP_is_good ){

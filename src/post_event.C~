@@ -32,7 +32,6 @@ void post_event(int run, int subrun){
   fChain->SetBranchAddress("tfine"       ,&v_time_fine     );
   fChain->SetBranchAddress("tcoarse"     ,&v_ttrigg        );
 
-  std::string oname=folder+"/post_event.root";
   auto ofile = new TFile((TString)oname,"RECREATE");
   TTree *otree = new TTree("tree","tree");
 

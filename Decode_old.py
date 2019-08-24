@@ -82,11 +82,14 @@ class reader:
         lsdelta_coarse=[]
         l1timestamp = -1
         gemrocid = -1
-
+        udp_packet = -1
         pre_timestamp = 0
 
         hitcounter=0
-        max_hitcount=100000
+        max_hitcount=100000000
+        max_count=1000000
+        flag_swap1=False
+        flag_swap2=False
 
         with open(path, 'rb') as f:
             for i in range(0, statinfo.st_size // 8):
@@ -148,9 +151,16 @@ class reader:
                             LOCAL_L1_TIMESTAMP  = int_x & 0xFFFF
                             pre_pretimestamp = pre_timestamp
                             pre_timestamp = l1timestamp
+                            pre_l1count = l1count
                             l1count = LOCAL_L1_COUNT
                             l1timestamp = LOCAL_L1_TIMESTAMP
-
+                           # diff = pre_l1count - l1count
+                            #print("{} and {} ".format(diff,l1count))
+                            if pre_l1count - l1count > 1:
+                                print("BAD SUB_RUN - L1 count problem") 
+                                flag_bad_l1 = True
+                                break
+                            
                         if(((int_x & 0xC000000000000000)>>62) == 0x0 and packet_header == 1 and packet_tailer == 0):
                             LOCAL_L1_TS_minus_TIGER_COARSE_TS = LOCAL_L1_TIMESTAMP - ((int_x >> 32) & 0xFFFF)
 
@@ -175,20 +185,57 @@ class reader:
                             #lsl1ts_min_tcoarse.append(LOCAL_L1_TIMESTAMP-tcoarse)
 
                             count_mismatch = 0
-                            #if(tcoarse > 64150):
-                                #tcoarse = tcoarse - 2**16 -1
-                            if((LOCAL_L1_TIMESTAMP-tcoarse) < 1300 or (LOCAL_L1_TIMESTAMP-tcoarse) > 1600):
-                                if((pre_timestamp-tcoarse) < 1300 or (pre_timestamp-tcoarse) > 1600):
-                                    count_mismatch = 2
-                                    lsl1ts_min_tcoarse.append(pre_pretimestamp-tcoarse)
-                                    l1count_new.append(l1count-2)
-                                else:
+                            #if(l1timestamp < 1566):
+                                #if(tcoarse > 64150):
+                                   # tcoarse = tcoarse - 2**16
+                            
+                            #if((LOCAL_L1_TIMESTAMP-tcoarse) < 1300 or (LOCAL_L1_TIMESTAMP-tcoarse) > 1600):
+                            #    if((pre_timestamp-tcoarse) < 1300 or (pre_timestamp-tcoarse) > 1600):
+                            #        count_mismatch = 2
+                            #        lsl1ts_min_tcoarse.append(pre_pretimestamp-tcoarse)
+                            #        l1count_new.append(l1count-2)
+                            #    else:
+                            #        count_mismatch = 1
+                            #        lsl1ts_min_tcoarse.append(pre_timestamp-tcoarse)
+                            #        l1count_new.append(l1count-1)
+                            #else:
+                            #    lsl1ts_min_tcoarse.append(LOCAL_L1_TIMESTAMP-tcoarse)
+                            #    l1count_new.append(l1count)
+
+                            lsl1ts_min_tcoarse_to_append = LOCAL_L1_TIMESTAMP - tcoarse
+                            l1count_new_to_append = l1count
+                            
+                            if(not(((LOCAL_L1_TIMESTAMP - tcoarse) > 1299 and (LOCAL_L1_TIMESTAMP - tcoarse) < 1567) or (LOCAL_L1_TIMESTAMP - tcoarse) < -63970)):
+                                flag_swap1 = True
+                            if(flag_swap1):
+                                if((int_x>>59)&0x7 > 3):
+                                    lsl1ts_min_tcoarse_to_append = pre_timestamp - tcoarse
+                                    l1count_new_to_append = l1count-1
                                     count_mismatch = 1
-                                    lsl1ts_min_tcoarse.append(pre_timestamp-tcoarse)
-                                    l1count_new.append(l1count-1)
-                            else:
-                                lsl1ts_min_tcoarse.append(LOCAL_L1_TIMESTAMP-tcoarse)
-                                l1count_new.append(l1count)
+                            #        if(not(((lsl1ts_min_tcoarse_to_append) > 1299 and (lsl1ts_min_tcoarse_to_append) < 1567) or (lsl1ts_min_tcoarse_to_append) < -63970)): 
+                             #           flag_swap2 = True
+                            
+                            if(flag_swap2):
+                                if((int_x>>59)&0x7 > 3):
+                                    lsl1ts_min_tcoarse_to_append = pre_pretimestamp - tcoarse
+                                    l1count_new_to_append = l1count-2
+                                    count_mismatch = 2
+                                    
+                            if(lsl1ts_min_tcoarse_to_append < 0):
+                                tcoarse = tcoarse - 2**16
+                                if((int_x>>59)&0x7 > 3):
+                                    if flag_swap1:
+                                        lsl1ts_min_tcoarse_to_append = pre_timestamp -tcoarse
+                                    if flag_swap2:
+                                        lsl1ts_min_tcoarse_to_append = pre_pretimestamp -tcoarse
+                                    if not (flag_swap1 or flag_swap2):
+                                        lsl1ts_min_tcoarse_to_append = LOCAL_L1_TIMESTAMP - tcoarse
+                                else:
+                                    lsl1ts_min_tcoarse_to_append = LOCAL_L1_TIMESTAMP - tcoarse
+
+                            lsl1ts_min_tcoarse.append(lsl1ts_min_tcoarse_to_append)
+                            l1count_new.append(l1count_new_to_append)
+
 
                             lscount_mismatch.append(count_mismatch)
                             lstcoarse.append(tcoarse)
@@ -199,7 +246,12 @@ class reader:
 
                         if(((int_x & 0xE000000000000000)>>61) == 0x7):
                             packet_tailer = 1
-                            gemrocid = (int_x >> 32) & 0x1F
+                            gemrocid = (int_x >> 32)&0x1F
+                           
+
+                        if(((int_x & 0xF000000000000000)>>60) == 0x4):
+                            pre_udp_packet = udp_packet
+                            udp_packet = (((int_x >> 32)&0xFFFFF) + ((int_x >> 0) & 0xFFFFFFF))
 
                         if(packet_header == 1 and packet_tailer == 1):
                             for x in range(len(lstac_id)):
@@ -231,8 +283,10 @@ class reader:
                                     mystruct.layer_id = 2
                                     
                                 hitcounter = hitcounter + 1
-                                if(hitcounter>max_hitcount): 
+                                if(LOCAL_L1_COUNT>max_count):
                                     continue
+                                #if(hitcounter>max_hitcount): 
+                                #    continue
                                 tree.Fill()
                             packet_header = 0
                             packet_tailer = 0
@@ -261,5 +315,6 @@ else:
 
 GEM5=reader(gemroc_id,mode,run)
 GEM5.write_root(filename)
+
 
 print ("Decoding: " + filename)

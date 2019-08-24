@@ -6,6 +6,9 @@
 #include <iostream>
 #include <fstream>
 
+const int NFeb = 45;
+const int NChannel = 64;
+
 float x_to_phi(int strip_x, int layer){
     float pitch = 0;
     if(layer==1){
@@ -50,13 +53,13 @@ void mapping_convert(){
     tree->Branch("phi",&phi,"phi/F");
 
 
-    int mpos_x[2][64][44];
-    int mpos_v[2][64][44];
+    int mpos_x[2][NChannel][NFeb];
+    int mpos_v[2][NChannel][NFeb];
     memset(mpos_x, -1, sizeof(mpos_x));
     memset(mpos_v, -1, sizeof(mpos_v));
 
-    for(int layer=0; layer<2; layer++){
-	std::string FILENAME = Form("L%d_mapping.txt",layer+1);
+    for(int layer=0; layer<3; layer++){
+	std::string FILENAME = Form("L%d_mapping.txt",layer);
 	std::ifstream data_file(FILENAME);
 
 	if(!data_file){
@@ -80,8 +83,8 @@ void mapping_convert(){
 
 
 	for(int chip=0; chip<2; chip++){
-	    for(ch_id=0; ch_id<64; ch_id++){
-		for(FEB_label=0; FEB_label<44; FEB_label++){
+	    for(ch_id=0; ch_id<NChannel; ch_id++){
+		for(FEB_label=0; FEB_label<NFeb; FEB_label++){
 
 		    pos_x = mpos_x[chip][ch_id][FEB_label];
 		    pos_v = mpos_v[chip][ch_id][FEB_label];
@@ -90,8 +93,9 @@ void mapping_convert(){
 		    gemroc_id = FEB_label/4;
                     SW_FEB_id = (FEB_label%4)*2 + chip_id-1;
 
-		    if(gemroc_id<4) layer_id = 1;
-		    if(gemroc_id>3) layer_id = 2;
+		    if(gemroc_id<4)  layer_id = 1;
+		    if(gemroc_id>3)  layer_id = 2;
+		    if(gemroc_id==11)layer_id = 0;
 		    phi = x_to_phi(pos_x, layer_id);
 
 
@@ -139,6 +143,7 @@ void mapping_convert(){
 		    else if(FEB_label==41) HW_FEB_id = 21;
 		    else if(FEB_label==42) HW_FEB_id = 24;
 		    else if(FEB_label==43) HW_FEB_id = 3;
+		    else if(FEB_label==44) HW_FEB_id = 16;
 		    else                   HW_FEB_id = -1;
 
 

@@ -150,6 +150,7 @@ class reader:
                             LOCAL_L1_TIMESTAMP  = int_x & 0xFFFF
                             pre_pretimestamp = pre_timestamp
                             pre_timestamp = l1timestamp
+                            pre_l1count = l1count
                             l1count = LOCAL_L1_COUNT
                             l1timestamp = LOCAL_L1_TIMESTAMP
                             
@@ -238,7 +239,12 @@ class reader:
 
                         if(((int_x & 0xE000000000000000)>>61) == 0x7):
                             packet_tailer = 1
-                            gemrocid = (int_x >> 32) & 0x1F
+                            gemrocid = (int_x >> 32)&0x1F
+                           
+
+                        #if(((int_x & 0xF000000000000000)>>60) == 0x4):
+                            #pre_udp_packet = udp_packet
+                            #udp_packet = (((int_x >> 32)&0xFFFFF) + ((int_x >> 0) & 0xFFFFFFF))
 
                         if(packet_header == 1 and packet_tailer == 1):
                             for x in range(len(lstac_id)):

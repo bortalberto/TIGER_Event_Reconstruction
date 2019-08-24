@@ -1,16 +1,34 @@
 #include "ana.h"
+
+const int NRoc = 12;
+const int NChannel = 64;
+const int NFeb = 45;
+
 void ana(int run, int subrun){
   std::string iname=ANADIR;
   iname=iname+std::to_string(run)+"/Sub_RUN_dec_"+std::to_string(subrun)+".root";
   std::string oname=ANADIR;
   oname=oname+std::to_string(run)+"/Sub_RUN_ana_"+std::to_string(subrun)+".root";
 
+  std::ifstream inStream(iname, std::ios::binary);
+  if (!inStream) {
+    std::cerr << "File " << iname << " not found" << std::endl;
+    return;
+  }
+
+
   int trigg_channel=20;
   if(run>=118) trigg_channel=62;
+  TString map_file = "mapping_IHEP.root";
+  if(run>=250) map_file ="mapping_IHEP_planar_ROC3.root";
+  TString qdc_file = "QDCcalib.root";
+  if(run>=250) qdc_file = "QDCcalib_planar_ROC3.root";
+  TString tdc_file = "TDCcalib.root";
+  if(run>=250) tdc_file = "TDCcalib_planar_ROC3.root";
   bool save_TP = true;
   //int trigg_FEB=4;
   //int trigg_gemroc=4;
-  auto mapfile = new TFile("mapping_IHEP.root");
+  auto mapfile = new TFile(map_file);
   auto maptree = (TTree*)mapfile->Get("tree");
   
   int channel_id, gemroc_id, SW_FEB_id, pos_x, pos_v, chip_id, FEB_label_id;
@@ -25,17 +43,17 @@ void ana(int run, int subrun){
   maptree->SetBranchAddress("chip_id", &chip_id);
   maptree->SetBranchAddress("FEB_label", &FEB_label_id);
   
-  int mx[11][8][64];
-  float mphi[11][8][64];
-  int mv[11][8][64];
-  int mchip_id[11][8][64];
-  int mFEB_label_id[11][8][64];
+  int mx[NRoc][8][NChannel];
+  float mphi[NRoc][8][NChannel];
+  int mv[NRoc][8][NChannel];
+  int mchip_id[NRoc][8][NChannel];
+  int mFEB_label_id[11][8][NChannel];
   memset(mx, -1, sizeof(mx));
   memset(mv, -1, sizeof(mv));
   memset(mphi, -1, sizeof(mphi));
   memset(mchip_id, -1, sizeof(mchip_id));
   memset(mFEB_label_id, -1, sizeof(mFEB_label_id));
-  
+
   for (int i = 0; i < maptree->GetEntries(); i++) {
     maptree->GetEntry(i);
     mx[gemroc_id][SW_FEB_id][channel_id] = pos_x;
@@ -44,6 +62,7 @@ void ana(int run, int subrun){
     mchip_id[gemroc_id][SW_FEB_id][channel_id] = chip_id;
     mFEB_label_id[gemroc_id][SW_FEB_id][channel_id] = FEB_label_id;
   }
+
   
   auto consfile = new TFile("QDCcalib.root");
   auto constree = (TTree*)consfile->Get("tree");
@@ -58,9 +77,9 @@ void ana(int run, int subrun){
   constree->SetBranchAddress("slope", &cons_slope);
   constree->SetBranchAddress("qmax", &cons_qmax);
   
-  float cons[11][8][64];
-  float mslope[11][8][64];
-  float mqmax[11][8][64];
+  float cons[NRoc][8][NChannel];
+  float mslope[NRoc][8][NChannel];
+  float mqmax[NRoc][8][NChannel];
   memset(cons, -1, sizeof(cons));
   memset(mslope, -1, sizeof(mslope));
   memset(mqmax, -1, sizeof(mqmax));
@@ -100,10 +119,10 @@ void ana(int run, int subrun){
   TDCconstree->SetBranchAddress("Tac3_Efine_min", &Tac3_Efine_min);
   TDCconstree->SetBranchAddress("Tac3_Efine_max", &Tac3_Efine_max);
   
-  float TDCcons_Tmin[11][8][64][4];
-  float TDCcons_Tbin[11][8][64][4];
-  float TDCcons_Emin[11][8][64][4];
-  float TDCcons_Ebin[11][8][64][4];
+  float TDCcons_Tmin[NRoc][8][NChannel][4];
+  float TDCcons_Tbin[NRoc][8][NChannel][4];
+  float TDCcons_Emin[NRoc][8][NChannel][4];
+  float TDCcons_Ebin[NRoc][8][NChannel][4];
   memset(TDCcons_Tmin, -1, sizeof(TDCcons_Tmin));
   memset(TDCcons_Tbin, -1, sizeof(TDCcons_Tbin));
   memset(TDCcons_Emin, -1, sizeof(TDCcons_Emin));
@@ -160,7 +179,7 @@ void ana(int run, int subrun){
   
   int channel, gemroc, FEB, strip_x, strip_v, count, timestamp, l1ts_min_tcoarse, lasttigerframenum, chip, FEB_label, tac, runNo, layer, max_count, trigg_flag;
   float charge_SH, charge_SH_uncal, constant, slope, qmax, delta_coarse, pos_phi, tcoarse, ecoarse, tfine, efine, ttrigg = -99999, trigg_tcoarse = -99999, tfine_uncal, efine_uncal, time, radius; 
-  
+  bool saturated = false;
   
   otree->Branch("runNo",&runNo,"runNo/I");
   otree->Branch("layer",&layer,"layer/I");
@@ -195,7 +214,7 @@ void ana(int run, int subrun){
   otree->Branch("tac",&tac,"tac/I");
   otree->Branch("trigg_flag",&trigg_flag,"trigg_flag/I");
   otree->Branch("time",&time,"time/F");
-  
+  otree->Branch("saturated",&saturated,"saturated/O");
   
   max_count = 0;
   for (int i = 0; i < datatree->GetEntries(); i++) {
@@ -212,6 +231,9 @@ void ana(int run, int subrun){
     }
     else if(layer==2){
       radius = 129.8;
+    }
+    else if(layer==0){
+      radius = 0;
     }
     
     channel = dchannel;
@@ -236,6 +258,8 @@ void ana(int run, int subrun){
     pos_phi = mphi[dgemroc][dFEB][dchannel];
     chip = mchip_id[dgemroc][dFEB][dchannel];
     FEB_label = mFEB_label_id[dgemroc][dFEB][dchannel];
+    if(charge_SH_uncal == 1008) saturated = true;
+    else saturated = false;
     if(charge_SH_uncal >= 1008) charge_SH = ((-1*constant)-(1024-charge_SH_uncal))/slope; //-1*(constant/slope);
     else charge_SH = (-1 * constant + charge_SH_uncal) / slope;
     
@@ -257,7 +281,6 @@ void ana(int run, int subrun){
     if(!save_TP && dchannel == trigg_channel) continue;
     otree->Fill();
   }
-  
   ofile->Write();
   ofile->Close();
   

@@ -9,7 +9,7 @@ void convert(){
     auto file = new TFile("TDCcalib.root","RECREATE");
     auto tree = new TTree("tree","tree");
 
-    for(int layer_id = 1; layer_id <4; layer_id++){
+    for(int layer_id = 0; layer_id <4; layer_id++){
 	for(int tig_id=0; tig_id<60; tig_id++){
 	    for(int chip_id=1; chip_id<3; chip_id++){
 		std::string data_folder = Form("L%i/",layer_id);
@@ -98,6 +98,11 @@ void convert(){
                         else if(tig_id==24) FEB_label = 42;
                         else if(tig_id==3) FEB_label = 43;
                         else continue;
+		    }
+		    else if(layer_id==0){
+		      //if(tig_id==16)  FEB_label = 44;
+		      if(tig_id==16)  FEB_label = 15;
+		      else continue;
 		    }
 		    else continue;
 

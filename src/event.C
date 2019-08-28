@@ -20,7 +20,7 @@ int trigg_channel = 62;
 
 //In file variables
 int dchannel, dgemroc, dFEB, dcount, dtimestamp, dstrip_x, dstrip_v, dl1ts_min_tcoarse, dlasttigerframenum, dchip, dFEB_label, drunNo, dlayer, dtrigg_flag;
-float dcharge_SH, dpos_phi, dtcoarse, decoarse, dtfine, define, dttrigg, dtrigg_tcoarse, dconstant, dslope, dqmax, dtime, dradius, ddelta_coarse; 
+float dcharge_SH, dcharge_TOT, dpos_phi, dtcoarse, decoarse, dtfine, define, dttrigg, dtrigg_tcoarse, dconstant, dslope, dqmax, dtime, dradius, ddelta_coarse; 
 
 //TP test
 int TP_count[N_TIGER];
@@ -90,8 +90,8 @@ void event(int run, int subrun){
   auto file = new TFile(iname.c_str());
   auto tree = (TTree*)file->Get("tree");
   
-  int dchannel, dgemroc, dFEB, dcount, dtimestamp, dstrip_x, dstrip_v, dl1ts_min_tcoarse, dlasttigerframenum, dchip, dFEB_label, drunNo, dlayer, dtrigg_flag;
-  float dcharge_SH, dpos_phi, dtcoarse, decoarse, dtfine, define, dttrigg, dtrigg_tcoarse, dconstant, dslope, dqmax, dtime, dradius, ddelta_coarse; 
+  int dchannel, dgemroc, dFEB, dcount, dtimestamp, dstrip_x, dstrip_v, dl1ts_min_tcoarse, dlasttigerframenum, dchip, dFEB_label, drunNo, dlayer, dtrigg_flag, dtac;
+  float dcharge_SH, dhcarge_TOT, dpos_phi, dtcoarse, decoarse, dtfine, define, dttrigg, dtrigg_tcoarse, dconstant, dslope, dqmax, dtime, dradius, ddelta_coarse; 
   bool dsaturated;
 
   tree->SetBranchAddress("runNo",&drunNo);
@@ -100,6 +100,7 @@ void event(int run, int subrun){
   tree->SetBranchAddress("gemroc",&dgemroc);
   tree->SetBranchAddress("FEB",&dFEB);
   tree->SetBranchAddress("charge_SH",&dcharge_SH);
+  tree->SetBranchAddress("charge_TOT",&dcharge_TOT);
   tree->SetBranchAddress("count",&dcount);
   tree->SetBranchAddress("timestamp",&dtimestamp);
   tree->SetBranchAddress("pos_phi",&dpos_phi);
@@ -122,6 +123,7 @@ void event(int run, int subrun){
   tree->SetBranchAddress("trigg_flag",&dtrigg_flag);
   tree->SetBranchAddress("delta_coarse",&ddelta_coarse);
   tree->SetBranchAddress("saturated",&dsaturated);
+  tree->SetBranchAddress("tac",&dtac);
   
   std::multimap<int,int> mevt;
   
@@ -245,8 +247,8 @@ void event(int run, int subrun){
   int evtNo, nhits, ngemrocs, ntimestamp, runNo, ntcoarse_L1_TP, ntcoarse_L2_TP;
   float trigg_tcoarse;
   
-  std::vector<int> tcount, tchannel, tgemroc, tFEB, ttimestamp, tstrip_x, tstrip_v, tl1ts_min_tcoarse, tchip, tFEB_label, tquality, tlayer;
-  std::vector<float> tcharge_SH, tpos_phi, ttcoarse, tecoarse, ttfine, tefine, t_min_ttrigg, tconstant, tslope, tqmax, ttime, tradius, ttrigg, delta_coarse;
+  std::vector<int> tcount, tchannel, tgemroc, tFEB, ttimestamp, tstrip_x, tstrip_v, tl1ts_min_tcoarse, tchip, tFEB_label, tquality, tlayer, ttac;
+  std::vector<float> tcharge_SH, tcharge_TOT, tpos_phi, ttcoarse, tecoarse, ttfine, tefine, t_min_ttrigg, tconstant, tslope, tqmax, ttime, tradius, ttrigg, delta_coarse;
   std::vector<bool> tsaturated;
   
   if(DEBUG) std::cout << "DEBUG::Just created all the vector variable" << std::endl;
@@ -273,6 +275,7 @@ void event(int run, int subrun){
   otree->Branch("l1ts_min_tcoarse"  , "vector<int>"  , &tl1ts_min_tcoarse); // GEMROC LOCAL_L1_TIMESTAMP - tcoarse for each hit
   otree->Branch("quality"           , "vector<int>"  , &tquality         ); // tags of good event for each hit
   otree->Branch("charge_SH"         , "vector<float>", &tcharge_SH       ); // charge in S&H mode, with QDC calibration, for each hit
+  otree->Branch("charge_TOT"        , "vector<float>", &tcharge_TOT      ); 
   otree->Branch("radius"            , "vector<float>", &tradius          ); // radius for each hit, L1: 90.223 mm; L2: 129.8 mm
   otree->Branch("pos_phi"           , "vector<float>", &tpos_phi         ); // phi positon (strip_x) for each hit
   otree->Branch("tcoarse"           , "vector<float>", &ttcoarse         ); // tcoarse value for each hit
@@ -288,7 +291,7 @@ void event(int run, int subrun){
   otree->Branch("delta_coarse"      , "vector<float>", &delta_coarse     );
   otree->Branch("count"             , "vector<int>"  , &tcount           ); // count number from the ROC
   otree->Branch("saturated"         , "vector<bool>" , &tsaturated       );
-
+  otree->Branch("tac"               , "vector<int>"  , &ttac             );
   
   if(DEBUG) std::cout << "DEBUG::Just Saved all the vector branches" << std::endl;
 
@@ -390,7 +393,7 @@ void event(int run, int subrun){
       
       //Check if there are BAD event due to ROC problem --> S/H only !!!
       //if(ddelta_coarse!=22 && ddelta_coarse!=21) continue; -> modified GM - 16/08/19 Scan Integration time
-      if(ddelta_coarse!=22 && ddelta_coarse!=21 && ddelta_coarse!=25 && ddelta_coarse!=26 && ddelta_coarse!=30 && ddelta_coarse!=34 && ddelta_coarse!=38 && ddelta_coarse!=42 && ddelta_coarse!=18) continue;
+      //if(ddelta_coarse!=22 && ddelta_coarse!=21 && ddelta_coarse!=25 && ddelta_coarse!=26 && ddelta_coarse!=30 && ddelta_coarse!=34 && ddelta_coarse!=38 && ddelta_coarse!=42 && ddelta_coarse!=18) continue;
       //if(DEBUG) std::cout << "DEBUG::Going to push_back" << std::endl;
       
       tcount           .push_back(dcount           );
@@ -400,6 +403,7 @@ void event(int run, int subrun){
       tFEB             .push_back(dFEB             ); 
       ttimestamp       .push_back(dtimestamp       );
       tcharge_SH       .push_back(dcharge_SH       );
+      tcharge_TOT      .push_back(dcharge_TOT      );
       tpos_phi         .push_back(dpos_phi         );
       tradius          .push_back(dradius          );
       tstrip_x         .push_back(dstrip_x         );
@@ -418,6 +422,7 @@ void event(int run, int subrun){
       ttime            .push_back(dtime            ); 
       delta_coarse     .push_back(ddelta_coarse    );
       tsaturated       .push_back(dsaturated       );
+      ttac             .push_back(dtac             );
       
       //if(DEBUG) std::cout << "DEBUG::Finished to push_back" << std::endl;
       
@@ -549,6 +554,7 @@ void event(int run, int subrun){
       tl1ts_min_tcoarse.clear();
       tquality         .clear();
       tcharge_SH       .clear();
+      tcharge_TOT      .clear();
       tradius          .clear();
       tpos_phi         .clear();
       ttcoarse         .clear();
@@ -563,7 +569,8 @@ void event(int run, int subrun){
       ttime            .clear();
       delta_coarse     .clear();
       tsaturated       .clear();
-      
+      ttac             .clear();
+     
       if(evtNo >= MAX_EVENT) {
 	std::cout << "***** ATTENTION THE MAXIMUM NUMBER OF EVENTS HAS BEEN REACHED, GOING TO END THE RUN. *****" << std::endl;
 	std::cout << "***** \t MAX_EVENT \t" << MAX_EVENT << " \t *****"                                          << std::endl;

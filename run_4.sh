@@ -8,13 +8,23 @@ then
     mkdir ${ANADIR}
 fi
 
+for i in $(seq 0 20);
+do
+    ts sleep 0.01
+done
+ts -N 20
+ts -df sleep 0.01
+    
+#Merge Recon
+ts -df bash -c "$exe_ter -C $1"
+echo "Terminated all"
 
-if [[ $1 -gt 88 ]]; then
-    DATADIR="/dati/Data_CGEM_IHEP_Integration_2019/raw_dat/RUN_$1"
-    ts -S 20
-    #Merge Recon
-    ts -fd $exe_ter -C $1
-    echo "Terminated all"
-fi
+for i in $(seq 0 20);
+do
+    ts sleep 0.01
+    done
+ts -N 20
+ts -df sleep 0.01
+
 cd $HERE
 

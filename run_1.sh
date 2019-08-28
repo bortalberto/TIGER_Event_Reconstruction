@@ -17,8 +17,8 @@ if [[ $1 -gt 88 ]]; then
     do
         ts bash -c "$exe_ter -D $1 $i"
     done
-    ts -N 20
-    ts -df sleep 5
+    ts -N 20 sleep 0.01
+    ts -df sleep 0.01
     echo "Terminated decoding"
     source run_2.sh
 fi

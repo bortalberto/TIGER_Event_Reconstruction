@@ -30,6 +30,9 @@ EXEC2	     = post_event
 COMPONENTS2  = main_post_event post_event
 BIN_EXEC2    = $(addprefix $(BIN)/,$(EXEC2) )
 
+EXEC3        = daq
+COMPONENTS3  = main_daq daq
+BIN_EXEC3     = $(addprefix $(BIN)/,$(EXEC3) )
 
 default: all
 
@@ -51,6 +54,10 @@ $(BIN)/$(EXEC1): $(addprefix $(LIB)/, $(addsuffix .o, $(COMPONENTS1) ) )
 $(BIN_EXEC2):
 	$(LD) $(LDFLAGS) $^ $(ROOTLIBS) $(addprefix -L, $(LIBS)) -o $@
 $(BIN)/$(EXEC2): $(addprefix $(LIB)/, $(addsuffix .o, $(COMPONENTS2) ) )
+# 3
+$(BIN_EXEC3):
+	$(LD) $(LDFLAGS) $^ $(ROOTLIBS) $(addprefix -L, $(LIBS)) -o $@
+$(BIN)/$(EXEC3): $(addprefix $(LIB)/, $(addsuffix .o, $(COMPONENTS3) ) )
 
 .PHONY : clean
 clean:
@@ -60,11 +67,12 @@ clean:
 	rm -f $(BIN_EXEC0)
 	rm -f $(BIN_EXEC1)
 	rm -f $(BIN_EXEC2)
+	rm -f $(BIN_EXEC3)
 $(LIB):
 	mkdir -p $(LIB)
 $(BIN):
 	mkdir -p $(BIN)
 installdirs: $(LIB) $(BIN)
-rec:  installdirs $(BIN_EXEC0) installdirs $(BIN_EXEC1) installdirs $(BIN_EXEC2)
+rec:  installdirs $(BIN_EXEC0) installdirs $(BIN_EXEC1) installdirs $(BIN_EXEC2) installdirs $(BIN_EXEC3)
 all: rec
 

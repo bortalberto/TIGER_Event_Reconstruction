@@ -26,7 +26,7 @@ if [[ $1 -gt 88 ]]; then
     ts -N 20 sleep 0.01
     ts -df sleep 0.01
     echo "Terminated reconstruction"
-    ts -df source run_4.sh
+    source run_4.sh
 
 fi
 cd $HERE

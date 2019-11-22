@@ -1,8 +1,8 @@
 #include "ana.h"
 
-const int NRoc = 12;
+const int NRoc = 14;
 const int NChannel = 64;
-const int NFeb = 45;
+const int NFeb = 60;
 
 void ana(int run, int subrun){
   std::string iname=ANADIR;
@@ -20,11 +20,47 @@ void ana(int run, int subrun){
   int trigg_channel=20;
   if(run>=118) trigg_channel=62;
   TString map_file = "mapping_IHEP.root";
-  if(run>=250) map_file ="mapping_IHEP_planar_ROC3.root";
   TString qdc_file = "QDCcalib.root";
-  if(run>=250) qdc_file = "QDCcalib_planar_ROC3.root";
   TString tdc_file = "TDCcalib.root";
-  if(run>=250) tdc_file = "TDCcalib_planar_ROC3.root";
+  if(run>=250 && run<264) {
+    map_file ="mapping_IHEP_planar_ROC3.root";
+    qdc_file = "QDCcalib_planar_ROC3.root";
+    tdc_file = "TDCcalib_planar_ROC3.root";
+  }
+  if(run>=264) {
+    map_file="mapping_IHEP_L2_2planari.root";
+    qdc_file = "QDCcalib_L2_2planari.root";
+    tdc_file = "TDCcalib_L2_2planari.root";
+  }
+  if(run>=274) {
+    map_file="mapping_IHEP_L2_2planari_bis.root";
+    qdc_file = "QDCcalib_L2_2planari_bis.root";
+    tdc_file = "TDCcalib_L2_2planari_bis.root";
+  }
+  if(run>=277) {
+    map_file="mapping_IHEP_L2_2planari_tris.root";
+    qdc_file = "QDCcalib_L2_2planari_tris.root";
+    tdc_file = "TDCcalib_L2_2planari_tris.root";
+  }
+  if(run>=281){
+    map_file="mapping_IHEP_L2_2planari_quad.root";
+    qdc_file = "QDCcalib_L2_2planari_quad.root";
+    tdc_file = "TDCcalib_L2_2planari_quad.root";
+  }
+  if(run==273 || run==267){ // TEMPORARY - 16/11/2019 - GM - TO BE REMOVED
+    map_file="mapping_IHEP_L2_2planari_quad.root";
+    qdc_file="QDCcalib_L2_2planari_quad.root";
+    tdc_file="TDCcalib_l2_2planari_quad.root";
+  }
+  if(run>=286){
+    map_file=  "mapping_IHEP_L2_2planari_penta.root";
+    qdc_file =     "QDCcalib_L2_2planari_penta.root";
+    tdc_file =     "TDCcalib_L2_2planari_penta.root";
+  }
+
+
+  TString tot_file1 = "delta_vth.root";
+  TString tot_file2 = "ToT_calib.root";
   bool save_TP = true;
   //int trigg_FEB=4;
   //int trigg_gemroc=4;
@@ -64,7 +100,7 @@ void ana(int run, int subrun){
   }
 
   
-  auto consfile = new TFile("QDCcalib.root");
+  auto consfile = new TFile(qdc_file);
   auto constree = (TTree*)consfile->Get("tree");
   
   int cons_channel_id, cons_gemroc_id, cons_SW_FEB_id;
@@ -93,7 +129,7 @@ void ana(int run, int subrun){
   }
   
   
-  auto TDCconsfile = new TFile("TDCcalib.root");
+  auto TDCconsfile = new TFile(tdc_file);
   auto TDCconstree = (TTree*)TDCconsfile->Get("tree");
   
   int TDCcons_channel_id, TDCcons_gemroc_id, TDCcons_SW_FEB_id;
@@ -149,12 +185,53 @@ void ana(int run, int subrun){
     TDCcons_Ebin[TDCcons_gemroc_id][TDCcons_SW_FEB_id][TDCcons_channel_id][3] = 6.25 / (Tac3_Efine_max - Tac3_Efine_min);
   }
   
+  auto TOTconsfile1 = new TFile(tot_file1);
+  auto TOTconstree1 = (TTree*)TOTconsfile1->Get("tree");
+  auto TOTconsfile2 = new TFile(tot_file2);
+  auto TOTconstree2 = (TTree*)TOTconsfile2->Get("tree");
+
+  int qlayer, qgemroc, qfeb, qchannel, qdelta_vth1_baseline;
+  int delta_vth1_baseline[NRoc][8][NChannel];
+
+  TOTconstree1->SetBranchAddress("layer_id", &qlayer);
+  TOTconstree1->SetBranchAddress("gemroc_id", &qgemroc);
+  TOTconstree1->SetBranchAddress("software_feb_id", &qfeb);
+  TOTconstree1->SetBranchAddress("channel_id", &qchannel);
+  TOTconstree1->SetBranchAddress("delta_vth1_baseline", &qdelta_vth1_baseline);
   
+  for(int i=0; i<TOTconstree1->GetEntries(); i++){
+    TOTconstree1->GetEntry(i);
+    if(qgemroc<0 || qfeb<0 || qchannel<0) continue;
+    delta_vth1_baseline[qgemroc][qfeb][qchannel] = qdelta_vth1_baseline;
+  }
+
+  int delta_vth;
+  float par_A, par_B, par_C, par_D, par_E;
+  float tot_parameters[100][5];
+
+  TOTconstree2->SetBranchAddress("vthr",&delta_vth);
+  TOTconstree2->SetBranchAddress("par_a",&par_A);
+  TOTconstree2->SetBranchAddress("par_b",&par_B);
+  TOTconstree2->SetBranchAddress("par_c",&par_C);
+  TOTconstree2->SetBranchAddress("par_d",&par_D);
+  TOTconstree2->SetBranchAddress("par_e",&par_E);
+
+  for(int i=0; i<TOTconstree2->GetEntries(); i++){
+    TOTconstree2->GetEntry(i);
+    if(delta_vth<0) continue;
+    tot_parameters[delta_vth][0]=par_A;
+    tot_parameters[delta_vth][1]=par_B;
+    tot_parameters[delta_vth][2]=par_C;
+    tot_parameters[delta_vth][3]=par_D;
+    tot_parameters[delta_vth][4]=par_E;
+  }
+
+
   auto datafile = new TFile(iname.c_str());
   auto datatree = (TTree*)datafile->Get("tree");
   
   int dchannel, dgemroc, dFEB, dcount, dtimestamp, dl1ts_min_tcoarse, dlasttigerframenum, dtac, drunNo, dlayer;
-  float dcharge_SH, ddelta_coarse, dtcoarse, decoarse, dtfine, define, dcharge_TOT;
+  float dcharge_SH, ddelta_coarse, dtcoarse, decoarse, dtfine, define;
   
   datatree->SetBranchAddress("layer_id", &dlayer);
   datatree->SetBranchAddress("runNo", &drunNo);
@@ -162,7 +239,6 @@ void ana(int run, int subrun){
   datatree->SetBranchAddress("gemroc_id", &dgemroc);
   datatree->SetBranchAddress("tiger_id", &dFEB);
   datatree->SetBranchAddress("charge_SH", &dcharge_SH);
-  datatree->SetBranchAddress("charge_TOT", &dcharge_TOT);
   datatree->SetBranchAddress("delta_coarse", &ddelta_coarse);
   datatree->SetBranchAddress("count", &dcount);
   datatree->SetBranchAddress("timestamp", &dtimestamp);
@@ -179,7 +255,7 @@ void ana(int run, int subrun){
   auto otree = new TTree("tree","tree");
   
   int channel, gemroc, FEB, strip_x, strip_v, count, timestamp, l1ts_min_tcoarse, lasttigerframenum, chip, FEB_label, tac, runNo, layer, max_count, trigg_flag;
-  float charge_SH, charge_SH_uncal, charge_TOT, constant, slope, qmax, delta_coarse, pos_phi, tcoarse, ecoarse, tfine, efine, ttrigg = -99999, trigg_tcoarse = -99999, tfine_uncal, efine_uncal, time, radius; 
+  float charge_SH, charge_SH_uncal, charge_TOT, charge_TOT_uncal, constant, slope, qmax, delta_coarse, pos_phi, tcoarse, ecoarse, tfine, efine, ttrigg = -99999, trigg_tcoarse = -99999, tfine_uncal, efine_uncal, time, radius; 
   bool saturated = false;
   
   otree->Branch("runNo",&runNo,"runNo/I");
@@ -193,6 +269,7 @@ void ana(int run, int subrun){
   otree->Branch("radius",&radius,"radius/F");
   otree->Branch("charge_SH_uncal",&charge_SH_uncal,"charge_SH_uncal/F");
   otree->Branch("charge_SH",&charge_SH,"charge_SH/F");
+  otree->Branch("charge_TOT_uncal",&charge_TOT_uncal,"charge_TOT_uncal/F");
   otree->Branch("charge_TOT",&charge_TOT,"charge_TOT/F");
   otree->Branch("QDCcali_constant",&constant,"constant/F");
   otree->Branch("QDCcali_slope",&slope,"slope/F");
@@ -226,6 +303,7 @@ void ana(int run, int subrun){
   
   for (int i = 0; i < datatree->GetEntries(); i++) {
     datatree->GetEntry(i);
+
     runNo = drunNo;
     layer = dlayer;
     if(layer==1){
@@ -266,14 +344,19 @@ void ana(int run, int subrun){
     if(charge_SH_uncal >= 1008) charge_SH = ((-1*constant)-(1024-charge_SH_uncal))/slope; //-1*(constant/slope);
     else charge_SH = (-1 * constant + charge_SH_uncal) / slope;
     
-    if(tfine_uncal<150||tfine_uncal>600) continue;
+    //if(tfine_uncal<150||tfine_uncal>600) continue;
 
     //the units for tfine and efine with correction are in ns
     tfine = (tfine_uncal - TDCcons_Tmin[dgemroc][dFEB][dchannel][tac]) * TDCcons_Tbin[dgemroc][dFEB][dchannel][tac];
     efine = (efine_uncal - TDCcons_Emin[dgemroc][dFEB][dchannel][tac]) * TDCcons_Ebin[dgemroc][dFEB][dchannel][tac];
 
     //TOT Calibration
-    charge_TOT = delta_coarse * 6.25 - efine + tfine;
+    TF1 *f_tot = new TF1("f","[4]*exp([0]*x+[1])+[2]+[3]*x",0,500);
+    int delta = delta_vth1_baseline[dgemroc][dFEB][dchannel];
+    f_tot->SetParameters(tot_parameters[delta][0],tot_parameters[delta][1],tot_parameters[delta][2],tot_parameters[delta][3],tot_parameters[delta][4]);
+    charge_TOT_uncal = delta_coarse * 6.25 - efine + tfine;
+    charge_TOT = f_tot->GetX(charge_TOT_uncal);
+    f_tot->~TF1();
 
     //globle time in ns
     time = (timestamp * pow(2,15) + tcoarse)*6.25 - tfine;
@@ -286,6 +369,7 @@ void ana(int run, int subrun){
       //charge_SH = 78;
     }
     if(!save_TP && dchannel == trigg_channel) continue;
+
     otree->Fill();
   }
   ofile->Write();

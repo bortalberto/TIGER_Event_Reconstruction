@@ -86,7 +86,7 @@ class reader:
         pre_timestamp = 0
 
         hitcounter=0
-        max_hitcount=100000
+        max_hitcount=1000000000000
         flag_swap1=False
         flag_swap2=False
 
@@ -138,7 +138,9 @@ class reader:
                             mystruct.layer_id = 1
                         elif(self.GEMROC_ID>3):
                             mystruct.layer_id = 2
-
+                        if(self.GEMROC_ID>11):
+                            mystruct.layer_id = 0
+                        
                         tree.Fill()
 
                     if(self.MODE == 1):

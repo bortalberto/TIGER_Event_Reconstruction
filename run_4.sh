@@ -25,6 +25,6 @@ do
     done
 ts -N 20
 ts -df sleep 0.01
-
+rm /tmp/ihep_data/ts-out*
 cd $HERE
 

@@ -8,8 +8,8 @@ const bool DEBUG               = false;
 const bool print_hits          = false;
 
 const int  MAX_SIZE   = 50000;
-const int  N_TIGER    =  100;
-const int  MAX_EVENT  = 50000;
+const int  N_TIGER    =  150;
+const int  MAX_EVENT  = 30000;
 const int  wrong_TP   = -9999;
 
 const int  count_min_cout = 332;
@@ -26,8 +26,9 @@ float dcharge_SH, dcharge_TOT, dpos_phi, dtcoarse, decoarse, dtfine, define, dtt
 int TP_count[N_TIGER];
 int TP_value[N_TIGER];
 int TP_diff [N_TIGER];
+double eff[N_TIGER], eff_T[N_TIGER], eff_Tpm1[N_TIGER];
 
-TTree *otree;
+TTree *otree, *ootree;
 
 int count_unique(std::vector<int> v){
     std::sort(v.begin(), v.end());
@@ -149,7 +150,7 @@ void event(int run, int subrun){
   if(test_chip_channel){
     //Channel analysis
     int max_channel = 64;
-    int max_chip = 45;
+    int max_chip = N_TIGER;
     TCanvas *c1 = new TCanvas("c1","c1",800,600);
     TH2I *channel_chip = new TH2I ("channel_chip","channel_chip",max_channel,0,max_channel,max_chip,0,max_chip);
     int mean =999999;
@@ -236,14 +237,15 @@ void event(int run, int subrun){
     tree->Draw("charge_SH>>h",charge_cut);
     cout<<"Mean charge after cut: "<<h->GetMean()<<endl;
     c1->SaveAs("channel_chip.pdf)","pdf");
-  }
-  //return;
+  } 
+ //return;
   
   
   
   auto ofile = new TFile(oname.c_str(),"RECREATE");
   otree = new TTree("tree","tree");
-  
+  //ootree = new TTree("tee","tee");
+
   int evtNo, nhits, ngemrocs, ntimestamp, runNo, ntcoarse_L1_TP, ntcoarse_L2_TP;
   float trigg_tcoarse;
   
@@ -295,10 +297,13 @@ void event(int run, int subrun){
   
   if(DEBUG) std::cout << "DEBUG::Just Saved all the vector branches" << std::endl;
 
-  otree->Branch("TP_count", &TP_count, "TP_count[100]/I");
-  otree->Branch("TP_value", &TP_value, "TP_value[100]/I");
-  otree->Branch("TP_diff" , &TP_diff , "TP_diff[100]/I" );
-  
+  otree->Branch("TP_count", &TP_count, "TP_count[200]/I");
+  otree->Branch("TP_value", &TP_value, "TP_value[200]/I");
+  otree->Branch("TP_diff" , &TP_diff , "TP_diff[200]/I" );
+  //ootree->Branch("eff"     , &eff     , "eff[200]/D");
+  //ootree->Branch("eff_T"   , &eff_T   , "eff_T[200]/D");
+  //ootree->Branch("eff_Tpm1", &eff_Tpm1, "eff_Tpm1[200]/D");
+
   std::multimap<int, int>::iterator it = mevt.begin();
   int itcount = it->first;
   nhits = 0;
@@ -580,14 +585,30 @@ void event(int run, int subrun){
     }//end of else not the same event
   }
   if(test_ROC_efficiency)TP_cout();    
-  otree->Write();
+
   file->Close();
+
+  otree->Write();
   ofile->Close();
+
+  std::string ooname=ANADIR;  
+  ooname=ooname+std::to_string(run)+"/Sub_RUN_TP_event_"+std::to_string(subrun)+".root";
+  TFile *oofile = new TFile(ooname.c_str(),"RECREATE");
+  ootree = new TTree("t1","t1");
+  ootree->Branch("eff"     , &eff     , "eff[200]/D");
+  ootree->Branch("eff_T"   , &eff_T   , "eff_T[200]/D");
+  ootree->Branch("eff_Tpm1", &eff_Tpm1, "eff_Tpm1[200]/D");
+  ootree->Fill();
+  ootree->Write();
+  oofile->Close();
+
+  //file->Close();
+  //ofile->Close();
 }
 
 
 void TP_fill(int ch, int feb, int ip, double t){
-
+  if(feb==-1) return;
   int TIGER_ID = 2*feb;
   if(ip==2) TIGER_ID++;
   if(TIGER_ID<0 || TIGER_ID>N_TIGER){
@@ -616,8 +637,10 @@ void TP_test(std::vector<int> v1, std::vector<int> v2){
 void TP_cout(){
 
   TString cut, cot, cat;
-  double eff[N_TIGER], eff_T[N_TIGER], eff_Tpm1[N_TIGER];
   cout<<(double)(otree->GetEntries())<<endl;
+  for(int i=0;i<N_TIGER;i++){
+    eff[i]=eff_T[i]=eff_Tpm1[i]=0;
+  }
   for(int i=0;i<N_TIGER;i++){
     cot = Form("TP_count[%d]==1", i);
     cut = Form("TP_diff[%d]==0 && TP_count[%d]==1" , i, i);

@@ -7,6 +7,7 @@
 #include "stdio.h"
 #include <string>
 #include "common.h"
+#include "TF1.h"
 
 using namespace std;
 void ana(int, int);

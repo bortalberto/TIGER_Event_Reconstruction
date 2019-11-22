@@ -3,7 +3,7 @@
 # Examlple of using options in scripts
 #
 QUI=$PWD
-NROC=12
+NROC=14
 
 if [ $# -eq 0 ]
 then
@@ -45,6 +45,7 @@ OPT_ROOT_EVT="false"
 OPT_ROOT_POS="false"
 OPT_ROOT="false"
 OPT_COPY="false"
+OPT_DAQ="false"
 while getopts "DAEPGMPQFmdawphegfCV" OPTION; do
     case $OPTION in
 
@@ -62,7 +63,7 @@ while getopts "DAEPGMPQFmdawphegfCV" OPTION; do
 	    echo "   -V RUN SUBRUN       Merge thr decoded files"
 	    echo "   -A RUN SUBRUN       Calibration       -> run ana.C"
 	    echo "   -E RUN SUBRUN       Create event      -> run event.C"
-	    echo "   -Q RUN SUBRUN       Associate the time of each TIGER to its TP -> run post_event.C"
+	    #echo "   -Q RUN SUBRUN       Associate the time of each TIGER to its TP -> run post_event.C"
 	    #echo "   -G RUN SUBRUN       Run decode ana event post_event"
 	    echo "   -P RUN SUBRUN       RUN ana event"
 	    echo "   -M                  make clean all"
@@ -74,6 +75,7 @@ while getopts "DAEPGMPQFmdawphegfCV" OPTION; do
 	    echo "   -p RUN SUBRUN       open the post_event   root file for the run and subrun given"
 	    echo "   -g RUN              open the merged event root file for the run"
 	    echo "   -C RUN              copy the run into thr GRAAL folder"
+	    echo "   -Q RUN SUBRUN       data quality analysis and plot"
 	    exit 0
 	    ;;
 
@@ -114,7 +116,7 @@ while getopts "DAEPGMPQFmdawphegfCV" OPTION; do
 		;;		
 
 	Q)
-		OPT_POS="true"
+                OPT_DAQ="true"
 		;;	
 
 	d)
@@ -193,7 +195,7 @@ fi
 if [ $OPT_DEC_MERGE = "true" ]
 then
     if [ -z $subrun_number ]; then echo "Use the command 'TER -V RUN SUBRUN ROC'"; exit; fi
-    if [ -f "${DATADIR}/SubRUN_${subrun_number}_GEMROC_0_TM.dat" ]; then
+    if [ -f "${DATADIR}/SubRUN_${subrun_number}_GEMROC_4_TM.dat" ]; then
 	hadd -f ${ANADIR}/Sub_RUN_dec_${subrun_number}.root ${ANADIR}/SubRUN_${subrun_number}_GEMROC*root
     fi
 fi
@@ -298,6 +300,7 @@ if [ $OPT_COPY = "true" ]
 then
     if [ -z $run_number ]; then echo "Use the command 'TER -C RUN'"; exit; fi
     hadd -f ${ANADIR}/event.root ${ANADIR}/Sub_RUN_event*root
+    hadd -f ${ANADIR}/TP_event.root ${ANADIR}/Sub_RUN_TP_event*root
     if [ $run_number -lt 100 ]
     then
         echo $DATA_RAW_TIGER/event.root $DATA_RAW_GRAAL/run7163920$run_number.root
@@ -308,4 +311,21 @@ then
 	cp $DATA_RAW_TIGER/event.root $DATA_RAW_GRAAL/run716392$run_number.root
     fi
 
+fi
+#DAQ analysis and plot
+if [ $OPT_DAQ = "true" ];
+then
+    if [ -z $run_number ]; then echo "Use the command 'TER -Q RUN' or TER -Q RUN SUBRUN"; exit; fi
+    if [ -z $subrun_number ]; 
+    then 
+	echo "./bin/daq $run_number";                                                                                                                                                                                                                                  
+	cd $TER;  
+	./bin/daq $run_number
+    else
+	echo "./bin/daq $run_number $subrun_number";
+        cd $TER;
+        ./bin/daq $run_number $subrun_number
+    fi
+    
+    cd $QUI; 
 fi

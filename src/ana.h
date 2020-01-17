@@ -6,6 +6,9 @@
 #include <fstream>
 #include "stdio.h"
 #include <string>
+#include "common.h"
+#include "TF1.h"
+
 using namespace std;
-void ana();
+void ana(int, int);
 #endif

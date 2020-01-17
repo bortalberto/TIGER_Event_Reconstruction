@@ -26,6 +26,18 @@ EXEC1        = event
 COMPONENTS1  = main_event event
 BIN_EXEC1    = $(addprefix $(BIN)/,$(EXEC1) )
 
+EXEC2	     = post_event
+COMPONENTS2  = main_post_event post_event
+BIN_EXEC2    = $(addprefix $(BIN)/,$(EXEC2) )
+
+EXEC3        = daq
+COMPONENTS3  = main_daq daq
+BIN_EXEC3     = $(addprefix $(BIN)/,$(EXEC3) )
+
+EXEC4	     = ext
+COMPONENTS4  = main_ext ext
+BIN_EXEC4    = $(addprefix $(BIN)/,$(EXEC4) )
+
 default: all
 
 # compile sources
@@ -42,6 +54,18 @@ $(BIN)/$(EXEC0): $(addprefix $(LIB)/, $(addsuffix .o, $(COMPONENTS0) ) )
 $(BIN_EXEC1):
 	$(LD) $(LDFLAGS) $^ $(ROOTLIBS) $(addprefix -L, $(LIBS)) -o $@
 $(BIN)/$(EXEC1): $(addprefix $(LIB)/, $(addsuffix .o, $(COMPONENTS1) ) )
+# 2
+$(BIN_EXEC2):
+	$(LD) $(LDFLAGS) $^ $(ROOTLIBS) $(addprefix -L, $(LIBS)) -o $@
+$(BIN)/$(EXEC2): $(addprefix $(LIB)/, $(addsuffix .o, $(COMPONENTS2) ) )
+# 3
+$(BIN_EXEC3):
+	$(LD) $(LDFLAGS) $^ $(ROOTLIBS) $(addprefix -L, $(LIBS)) -o $@
+$(BIN)/$(EXEC3): $(addprefix $(LIB)/, $(addsuffix .o, $(COMPONENTS3) ) )
+#4
+$(BIN_EXEC4):
+	$(LD) $(LDFLAGS) $^ $(ROOTLIBS) $(addprefix -L, $(LIBS)) -o $@
+$(BIN)/$(EXEC4): $(addprefix $(LIB)/, $(addsuffix .o, $(COMPONENTS4) ) )
 
 .PHONY : clean
 clean:
@@ -50,11 +74,14 @@ clean:
 	rm -f $(LIB)/*.so
 	rm -f $(BIN_EXEC0)
 	rm -f $(BIN_EXEC1)
+	rm -f $(BIN_EXEC2)
+	rm -f $(BIN_EXEC3)
+	rm -f $(BIN_EXEC4)
 $(LIB):
 	mkdir -p $(LIB)
 $(BIN):
 	mkdir -p $(BIN)
 installdirs: $(LIB) $(BIN)
-rec:  installdirs $(BIN_EXEC0) installdirs $(BIN_EXEC1) 
+rec:  installdirs $(BIN_EXEC0) installdirs $(BIN_EXEC1) installdirs $(BIN_EXEC2) installdirs $(BIN_EXEC3) installdirs $(BIN_EXEC4)
 all: rec
 

@@ -1,65 +1,62 @@
-DATADIR="~/data/raw_dat/$1"
-ANADIR="~/data/raw_root/$1"
+ANADIR="/dati/Data_CGEM_IHEP_Integration_2019/raw_root/$1"
 HERE=$PWD
+NROC=12
+NSUB=1000
 
 if [ ! -d ${ANADIR} ]
 then
     mkdir ${ANADIR}
-else
-    rm -f ${ANADIR}/Spill*.root
-    rm -f ${ANADIR}/event.root
-    rm -f ${ANADIR}/ana.root
-    rm -f ${ANADIR}/log
 fi
 
-if [ ! -f "${DATADIR}/file_list" ]; then
-    echo "cannot find \"file_list\" in ${DATADIR}"
-    return;
-fi
+#if [ ! -f "${DATADIR}/file_list" ]; then
+#    echo "cannot find \"file_list\" in ${DATADIR}"
+#    return;
+#fi
 
-rm Spill_*GEMROC*_TM.* -f
+rm Spill_*GEMROC*.* -f
 r=1
-for DATA in `cat ${DATADIR}/file_list`
-do
-    cp ${DATADIR}/${DATA}GEMROC_*_TM.dat .
-
-    for ((g=0; g<=11; g++))
-    #for ((g=0; g<=3; g++))
-    #for ((g=4; g<=11; g++))
+#ls ${DATADIR}
+if [[ $1 -lt 88 ]]; then
+    DATADIR="/dati/Data_CGEM_IHEP_Integration_2019/raw_dat/$1"
+    for ROC in `ls ${DATADIR}/Spill* | sed 's/^.\{,65\}//' | sed 's/.$//' | sed 's/.$//'| sed 's/.$//' | sed 's/.$//'   `
     do
-	if [ -f "${DATA}GEMROC_${g}_TM.dat" ]; then
-	   python Decode.py ${DATA}GEMROC_${g}_TM.dat $g 1 $r
+	#echo ROC: ${ROC}
+	#echo FILE: ${DATADIR}/Spill_$1_GEMROC_*.dat
+	cp ${DATADIR}/Spill_$1_GEMROC_*.dat .
+	
+	#echo NOME: Spill_$1_GEMROC_${ROC}.dat
+	if [ -f "Spill_$1_GEMROC_${ROC}.dat" ]; then
+	    python Decode.py Spill_$1_GEMROC_${ROC}.dat ${ROC} 1 $r # triggermatch
+	    #python Decode.py Spill_$1_GEMROC_${ROC}.dat ${ROC} 0 $r #triggerless
 	fi
-    done
-
-    hadd decode.root ${DATA}GEMROC*root
-    #root -b -q ana.cxx
+	
+	#   ls
+    done  
+    hadd -f decode.root Spill_$1_GEMROC*root
     ./bin/ana
-    #root -b -q event.cxx
     ./bin/event
-    
-    mv decode.root ${ANADIR}/${DATA}decode.root
-    mv ana.root ${ANADIR}/${DATA}ana.root
-    mv event.root ${ANADIR}/${DATA}event.root
-    echo "RunNo. $r\t${DATA}*" >> ${ANADIR}/log
+    ./bin/post_event
+ 
+    mv decode.root ${ANADIR}/Spill_$1_decode.root
+    mv ana.root ${ANADIR}/Spill_$1_ana.root
+    mv event.root ${ANADIR}/Spill_$1_event.root
+    mv channel_chip.pdf ${ANADIR}/.
+    echo "RunNo. $r\t${ROC}*" >> ${ANADIR}/log
 
-    rm Spill_*GEMROC*_TM.* -f
-    let r+=1
-done
+    rm Spill_*GEMROC*.* -f
 
-cd ${ANADIR}
-hadd -f ana.root *ana.root
-hadd -f event.root *event.root
-
-cp $HERE/check*cxx .
-root -b -q check_L1.cxx
-root -b -q check_L2.cxx
-rm -f check*cxx
+fi
+if [[ $1 -gt 88 ]]; then
+    #Decode
+    ts -f bash -c "source run_decode.sh $1"
+    #Merge decode
+    ts -fd bash -c "source run_dec_merge.sh $1"
+    #Reconstruction
+    ts -fd bash -c "source run_recon.sh $1"
+    #Merge recon
+    #ts -fd $exe_ter -C $1
+fi
 
 echo "Finish"
-pwd
-ls
 
-#mv event.root $1_event.root
 cd $HERE
-#cd ..

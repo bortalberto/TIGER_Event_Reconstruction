@@ -1,0 +1,501 @@
+RUN: 227
+SUBRUN: 0
+ROC:
+./bin/event 227 0
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2012542700
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2013092868
+Error in the TP test with TIGER ID: -2019338242
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2012755220
+Error in the TP test with TIGER ID: -2012183290
+Error in the TP test with TIGER ID: -2012890538
+Error in the TP test with TIGER ID: -2010829914
+Error in the TP test with TIGER ID: -2013805062
+Error in the TP test with TIGER ID: -2015499718
+Error in the TP test with TIGER ID: -2013254846
+Error in the TP test with TIGER ID: -2013251954
+Error in the TP test with TIGER ID: -2013641270
+Error in the TP test with TIGER ID: -2018236304
+Error in the TP test with TIGER ID: -2013127974
+Error in the TP test with TIGER ID: -2010017404
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2013424794
+Error in the TP test with TIGER ID: -2012500524
+Error in the TP test with TIGER ID: -2011587254
+Error in the TP test with TIGER ID: -2014993524
+Error in the TP test with TIGER ID: -2014745650
+Error in the TP test with TIGER ID: -2014300162
+Error in the TP test with TIGER ID: -2012713144
+Error in the TP test with TIGER ID: -2013092868
+Error in the TP test with TIGER ID: -2012970240
+Error in the TP test with TIGER ID: -2019338242
+Error in the TP test with TIGER ID: -2012806100
+Error in the TP test with TIGER ID: -2021376012
+Error in the TP test with TIGER ID: -2013753634
+Error in the TP test with TIGER ID: -2018341254
+Error in the TP test with TIGER ID: -2012320776
+Error in the TP test with TIGER ID: -2011482328
+Error in the TP test with TIGER ID: -2013545098
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2019338242
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015653462
+Error in the TP test with TIGER ID: -2014729040
+Error in the TP test with TIGER ID: -2012220728
+Error in the TP test with TIGER ID: -2012347198
+Error in the TP test with TIGER ID: -2014272250
+Error in the TP test with TIGER ID: -2012890538
+Error in the TP test with TIGER ID: -2011587254
+Error in the TP test with TIGER ID: -2014993524
+Error in the TP test with TIGER ID: -2012806100
+Error in the TP test with TIGER ID: -2014300162
+Error in the TP test with TIGER ID: -2010017404
+Error in the TP test with TIGER ID: -2013424794
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2015499718
+Error in the TP test with TIGER ID: -2016330454
+Error in the TP test with TIGER ID: -2012320776
+Error in the TP test with TIGER ID: -2012158484
+Error in the TP test with TIGER ID: -2014745650
+Error in the TP test with TIGER ID: -2018341254
+Error in the TP test with TIGER ID: -2010674174
+Error in the TP test with TIGER ID: -2017753512
+Error in the TP test with TIGER ID: -2012419100
+Error in the TP test with TIGER ID: -2012673256
+Error in the TP test with TIGER ID: -2013512842
+Error in the TP test with TIGER ID: -2016901876
+Error in the TP test with TIGER ID: -2013251954
+Error in the TP test with TIGER ID: -2014593716
+Error in the TP test with TIGER ID: -2013545098
+Error in the TP test with TIGER ID: -2015194546
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2013805062
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2012320776
+Error in the TP test with TIGER ID: -2013641270
+Error in the TP test with TIGER ID: -2012713144
+Error in the TP test with TIGER ID: -2013512842
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2012970240
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2014745650
+Error in the TP test with TIGER ID: -2013545098
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2012540666
+Error in the TP test with TIGER ID: -2012134394
+Error in the TP test with TIGER ID: -2017385044
+Error in the TP test with TIGER ID: -2015333368
+Error in the TP test with TIGER ID: -2015176488
+Error in the TP test with TIGER ID: -2012126758
+Error in the TP test with TIGER ID: -2017809972
+Error in the TP test with TIGER ID: -2012673256
+Error in the TP test with TIGER ID: -2018437108
+Error in the TP test with TIGER ID: -2015194546
+Error in the TP test with TIGER ID: -2015906726
+Error in the TP test with TIGER ID: -2018372074
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2020214848
+Error in the TP test with TIGER ID: -2013254846
+Error in the TP test with TIGER ID: -2019589432
+Error in the TP test with TIGER ID: -2011870236
+Error in the TP test with TIGER ID: -2014140284
+Error in the TP test with TIGER ID: -2012220728
+Error in the TP test with TIGER ID: -2017110368
+Error in the TP test with TIGER ID: -2010829914
+Error in the TP test with TIGER ID: -2016969628
+Error in the TP test with TIGER ID: -2013805062
+Error in the TP test with TIGER ID: -2015837330
+Error in the TP test with TIGER ID: -2015499718
+Error in the TP test with TIGER ID: -2019078368
+Error in the TP test with TIGER ID: -2014300162
+Error in the TP test with TIGER ID: -2021376012
+Error in the TP test with TIGER ID: -2010017404
+Error in the TP test with TIGER ID: -2014885728
+Error in the TP test with TIGER ID: -2012500524
+Error in the TP test with TIGER ID: -2016569776
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2019441420
+Error in the TP test with TIGER ID: -2018372074
+Error in the TP test with TIGER ID: -2013761926
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2014140284
+Error in the TP test with TIGER ID: -2012126758
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2012347198
+Error in the TP test with TIGER ID: -2013127974
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2019589432
+Error in the TP test with TIGER ID: -2014593716
+Error in the TP test with TIGER ID: -2017555182
+Error in the TP test with TIGER ID: -2015627340
+Error in the TP test with TIGER ID: -2016237858
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2017753512
+Error in the TP test with TIGER ID: -2012126758
+Error in the TP test with TIGER ID: -2015837330
+Error in the TP test with TIGER ID: -2016901876
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2012126758
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2017555182
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2017555182
+Error in the TP test with TIGER ID: -2016330454
+Error in the TP test with TIGER ID: -2015627340
+Error in the TP test with TIGER ID: -2017385044
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2011870236
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2013092868
+Error in the TP test with TIGER ID: -2019338242
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2012755220
+Error in the TP test with TIGER ID: -2014993524
+Error in the TP test with TIGER ID: -2012970240
+Error in the TP test with TIGER ID: -2012126758
+Error in the TP test with TIGER ID: -2007254944
+Evt. No.	100 	 & nHits 	110
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2018372074
+Error in the TP test with TIGER ID: -2012673256
+Error in the TP test with TIGER ID: -2019589432
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2018236304
+Error in the TP test with TIGER ID: -2013424794
+Error in the TP test with TIGER ID: -2012713144
+Error in the TP test with TIGER ID: -2011482328
+Error in the TP test with TIGER ID: -2017056180
+Error in the TP test with TIGER ID: -2011796410
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2013092868
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Error in the TP test with TIGER ID: -2015836348
+Error in the TP test with TIGER ID: -2010659442
+Evt. No.	200 	 & nHits 	95
+Evt. No.	300 	 & nHits 	95
+Evt. No.	400 	 & nHits 	112
+Error in the TP test with TIGER ID: -2016605528
+Error in the TP test with TIGER ID: -2023002580
+Error in the TP test with TIGER ID: -2014140284
+Error in the TP test with TIGER ID: -2016330454
+Error in the TP test with TIGER ID: -2017555182
+Error in the TP test with TIGER ID: -2020265048
+Error in the TP test with TIGER ID: -2019078368
+Error in the TP test with TIGER ID: -2013512842
+Error in the TP test with TIGER ID: -2014643450
+Error in the TP test with TIGER ID: -2012806100
+Error in the TP test with TIGER ID: -2016901876
+Error in the TP test with TIGER ID: -2012713144
+Error in the TP test with TIGER ID: -2014593716
+Error in the TP test with TIGER ID: -2012673256
+Error in the TP test with TIGER ID: -2015084876
+Error in the TP test with TIGER ID: -2016237858
+Error in the TP test with TIGER ID: -2017110368
+Error in the TP test with TIGER ID: -2013641270
+Error in the TP test with TIGER ID: -2015653462
+Error in the TP test with TIGER ID: -2014993524
+Error in the TP test with TIGER ID: -2015084876
+Error in the TP test with TIGER ID: -2012673256
+Error in the TP test with TIGER ID: -2012158484
+TIGER chip 	0 efficiency: 	0.947489	 and time efficiency: 	0.917808 and time efficiency +- 1 clock: 	0.947489
+TIGER chip 	1 efficiency: 	0.947489	 and time efficiency: 	0.643836 and time efficiency +- 1 clock: 	0.942922
+TIGER chip 	2 efficiency: 	0.940639	 and time efficiency: 	0.908676 and time efficiency +- 1 clock: 	0.940639
+TIGER chip 	3 efficiency: 	0.954338	 and time efficiency: 	0.922374 and time efficiency +- 1 clock: 	0.954338
+TIGER chip 	4 efficiency: 	0.96347	 and time efficiency: 	0.931507 and time efficiency +- 1 clock: 	0.96347
+TIGER chip 	5 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	6 efficiency: 	0.954338	 and time efficiency: 	0.922374 and time efficiency +- 1 clock: 	0.954338
+TIGER chip 	7 efficiency: 	0.954338	 and time efficiency: 	0.00913242 and time efficiency +- 1 clock: 	0.929224
+TIGER chip 	8 efficiency: 	0.942922	 and time efficiency: 	0.922374 and time efficiency +- 1 clock: 	0.942922
+TIGER chip 	9 efficiency: 	0.947489	 and time efficiency: 	0.926941 and time efficiency +- 1 clock: 	0.947489
+TIGER chip 	10 efficiency: 	0.956621	 and time efficiency: 	0.936073 and time efficiency +- 1 clock: 	0.956621
+TIGER chip 	11 efficiency: 	0.929224	 and time efficiency: 	0.910959 and time efficiency +- 1 clock: 	0.929224
+TIGER chip 	12 efficiency: 	0.945205	 and time efficiency: 	0.924658 and time efficiency +- 1 clock: 	0.945205
+TIGER chip 	13 efficiency: 	0.940639	 and time efficiency: 	0.920091 and time efficiency +- 1 clock: 	0.940639
+TIGER chip 	14 efficiency: 	0.961187	 and time efficiency: 	0.940639 and time efficiency +- 1 clock: 	0.961187
+TIGER chip 	15 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	16 efficiency: 	0.949772	 and time efficiency: 	0.949772 and time efficiency +- 1 clock: 	0.949772
+TIGER chip 	17 efficiency: 	0.666667	 and time efficiency: 	0.666667 and time efficiency +- 1 clock: 	0.666667
+TIGER chip 	18 efficiency: 	0.952055	 and time efficiency: 	0.952055 and time efficiency +- 1 clock: 	0.952055
+TIGER chip 	19 efficiency: 	0.965753	 and time efficiency: 	0.965753 and time efficiency +- 1 clock: 	0.965753
+TIGER chip 	20 efficiency: 	0.940639	 and time efficiency: 	0.940639 and time efficiency +- 1 clock: 	0.940639
+TIGER chip 	21 efficiency: 	0.947489	 and time efficiency: 	0.947489 and time efficiency +- 1 clock: 	0.947489
+TIGER chip 	22 efficiency: 	0.961187	 and time efficiency: 	0.961187 and time efficiency +- 1 clock: 	0.961187
+TIGER chip 	23 efficiency: 	0.945205	 and time efficiency: 	0.945205 and time efficiency +- 1 clock: 	0.945205
+TIGER chip 	24 efficiency: 	0.940639	 and time efficiency: 	0.915525 and time efficiency +- 1 clock: 	0.940639
+TIGER chip 	25 efficiency: 	0.93379	 and time efficiency: 	0.908676 and time efficiency +- 1 clock: 	0.93379
+TIGER chip 	26 efficiency: 	0.924658	 and time efficiency: 	0.906393 and time efficiency +- 1 clock: 	0.924658
+TIGER chip 	27 efficiency: 	0.947489	 and time efficiency: 	0.924658 and time efficiency +- 1 clock: 	0.947489
+TIGER chip 	28 efficiency: 	0.954338	 and time efficiency: 	0.931507 and time efficiency +- 1 clock: 	0.954338
+TIGER chip 	29 efficiency: 	0.945205	 and time efficiency: 	0.922374 and time efficiency +- 1 clock: 	0.945205
+TIGER chip 	30 efficiency: 	0.936073	 and time efficiency: 	0.910959 and time efficiency +- 1 clock: 	0.936073
+TIGER chip 	31 efficiency: 	0.961187	 and time efficiency: 	0.0365297 and time efficiency +- 1 clock: 	0.961187
+TIGER chip 	32 efficiency: 	0.961187	 and time efficiency: 	0.931507 and time efficiency +- 1 clock: 	0.961187
+TIGER chip 	33 efficiency: 	0.947489	 and time efficiency: 	0.922374 and time efficiency +- 1 clock: 	0.947489
+TIGER chip 	34 efficiency: 	0.945205	 and time efficiency: 	0.920091 and time efficiency +- 1 clock: 	0.945205
+TIGER chip 	35 efficiency: 	0.961187	 and time efficiency: 	0.924658 and time efficiency +- 1 clock: 	0.961187
+TIGER chip 	36 efficiency: 	0.952055	 and time efficiency: 	0.335616 and time efficiency +- 1 clock: 	0.3379
+TIGER chip 	37 efficiency: 	0.942922	 and time efficiency: 	0.33105 and time efficiency +- 1 clock: 	0.3379
+TIGER chip 	38 efficiency: 	0.952055	 and time efficiency: 	0.340183 and time efficiency +- 1 clock: 	0.340183
+TIGER chip 	39 efficiency: 	0.901826	 and time efficiency: 	0.267123 and time efficiency +- 1 clock: 	0.319635
+TIGER chip 	40 efficiency: 	0.858447	 and time efficiency: 	0.808219 and time efficiency +- 1 clock: 	0.858447
+TIGER chip 	41 efficiency: 	0.922374	 and time efficiency: 	0.86758 and time efficiency +- 1 clock: 	0.922374
+TIGER chip 	42 efficiency: 	0.954338	 and time efficiency: 	0.89726 and time efficiency +- 1 clock: 	0.954338
+TIGER chip 	43 efficiency: 	0.956621	 and time efficiency: 	0.894977 and time efficiency +- 1 clock: 	0.956621
+TIGER chip 	44 efficiency: 	0.958904	 and time efficiency: 	0.899543 and time efficiency +- 1 clock: 	0.958904
+TIGER chip 	45 efficiency: 	0.952055	 and time efficiency: 	0.892694 and time efficiency +- 1 clock: 	0.952055
+TIGER chip 	46 efficiency: 	0.954338	 and time efficiency: 	0.892694 and time efficiency +- 1 clock: 	0.954338
+TIGER chip 	47 efficiency: 	0.968037	 and time efficiency: 	0.90411 and time efficiency +- 1 clock: 	0.965753
+TIGER chip 	48 efficiency: 	0.956621	 and time efficiency: 	0.86758 and time efficiency +- 1 clock: 	0.956621
+TIGER chip 	49 efficiency: 	0.947489	 and time efficiency: 	0.853881 and time efficiency +- 1 clock: 	0.947489
+TIGER chip 	50 efficiency: 	0.965753	 and time efficiency: 	0.876712 and time efficiency +- 1 clock: 	0.965753
+TIGER chip 	51 efficiency: 	0.965753	 and time efficiency: 	0.872146 and time efficiency +- 1 clock: 	0.965753
+TIGER chip 	52 efficiency: 	0.961187	 and time efficiency: 	0.86758 and time efficiency +- 1 clock: 	0.961187
+TIGER chip 	53 efficiency: 	0.936073	 and time efficiency: 	0.810502 and time efficiency +- 1 clock: 	0.936073
+TIGER chip 	54 efficiency: 	0.952055	 and time efficiency: 	0.858447 and time efficiency +- 1 clock: 	0.952055
+TIGER chip 	55 efficiency: 	0.949772	 and time efficiency: 	0.116438 and time efficiency +- 1 clock: 	0.949772
+TIGER chip 	56 efficiency: 	0.956621	 and time efficiency: 	0.929224 and time efficiency +- 1 clock: 	0.956621
+TIGER chip 	57 efficiency: 	0.961187	 and time efficiency: 	0.93379 and time efficiency +- 1 clock: 	0.961187
+TIGER chip 	58 efficiency: 	0.96347	 and time efficiency: 	0.936073 and time efficiency +- 1 clock: 	0.96347
+TIGER chip 	59 efficiency: 	0.947489	 and time efficiency: 	0.922374 and time efficiency +- 1 clock: 	0.947489
+TIGER chip 	60 efficiency: 	0.949772	 and time efficiency: 	0.924658 and time efficiency +- 1 clock: 	0.949772
+TIGER chip 	61 efficiency: 	0.949772	 and time efficiency: 	0.922374 and time efficiency +- 1 clock: 	0.949772
+TIGER chip 	62 efficiency: 	0.945205	 and time efficiency: 	0.920091 and time efficiency +- 1 clock: 	0.945205
+TIGER chip 	63 efficiency: 	0.952055	 and time efficiency: 	0.924658 and time efficiency +- 1 clock: 	0.952055
+TIGER chip 	64 efficiency: 	0.961187	 and time efficiency: 	0.90411 and time efficiency +- 1 clock: 	0.961187
+TIGER chip 	65 efficiency: 	0.942922	 and time efficiency: 	0.885845 and time efficiency +- 1 clock: 	0.942922
+TIGER chip 	66 efficiency: 	0.968037	 and time efficiency: 	0.906393 and time efficiency +- 1 clock: 	0.968037
+TIGER chip 	67 efficiency: 	0.961187	 and time efficiency: 	0.899543 and time efficiency +- 1 clock: 	0.961187
+TIGER chip 	68 efficiency: 	0.947489	 and time efficiency: 	0.890411 and time efficiency +- 1 clock: 	0.947489
+TIGER chip 	69 efficiency: 	0.952055	 and time efficiency: 	0.894977 and time efficiency +- 1 clock: 	0.952055
+TIGER chip 	70 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	71 efficiency: 	0.96347	 and time efficiency: 	0.0296804 and time efficiency +- 1 clock: 	0.906393
+TIGER chip 	72 efficiency: 	0.954338	 and time efficiency: 	0.931507 and time efficiency +- 1 clock: 	0.954338
+TIGER chip 	73 efficiency: 	0.961187	 and time efficiency: 	0.938356 and time efficiency +- 1 clock: 	0.961187
+TIGER chip 	74 efficiency: 	0.952055	 and time efficiency: 	0.931507 and time efficiency +- 1 clock: 	0.952055
+TIGER chip 	75 efficiency: 	0.958904	 and time efficiency: 	0.936073 and time efficiency +- 1 clock: 	0.958904
+TIGER chip 	76 efficiency: 	0.952055	 and time efficiency: 	0.929224 and time efficiency +- 1 clock: 	0.952055
+TIGER chip 	77 efficiency: 	0.949772	 and time efficiency: 	0.929224 and time efficiency +- 1 clock: 	0.949772
+TIGER chip 	78 efficiency: 	0.952055	 and time efficiency: 	0.929224 and time efficiency +- 1 clock: 	0.952055
+TIGER chip 	79 efficiency: 	0.952055	 and time efficiency: 	0.931507 and time efficiency +- 1 clock: 	0.952055
+TIGER chip 	80 efficiency: 	0.949772	 and time efficiency: 	0.93379 and time efficiency +- 1 clock: 	0.949772
+TIGER chip 	81 efficiency: 	0.961187	 and time efficiency: 	0.945205 and time efficiency +- 1 clock: 	0.961187
+TIGER chip 	82 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	83 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	84 efficiency: 	0.956621	 and time efficiency: 	0.940639 and time efficiency +- 1 clock: 	0.956621
+TIGER chip 	85 efficiency: 	0.949772	 and time efficiency: 	0.936073 and time efficiency +- 1 clock: 	0.949772
+TIGER chip 	86 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	87 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	88 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	89 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0

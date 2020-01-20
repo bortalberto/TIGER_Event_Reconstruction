@@ -276,7 +276,8 @@ class reader:
                                     mystruct.layer_id = 1
                                 elif(gemrocid>3):
                                     mystruct.layer_id = 2
-                                    
+                                if(gemrocid>11):
+                                    mystruct.layer_id = 0
                                 hitcounter = hitcounter + 1
                                 if(hitcounter>max_hitcount): 
                                     continue

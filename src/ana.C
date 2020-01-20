@@ -19,6 +19,7 @@ void ana(int run, int subrun){
 
   int trigg_channel=20;
   if(run>=118) trigg_channel=62;
+  if(run==337) trigg_channel=-1;
   TString map_file = "mapping_IHEP.root";
   TString qdc_file = "QDCcalib.root";
   TString tdc_file = "TDCcalib.root";
@@ -57,7 +58,11 @@ void ana(int run, int subrun){
     qdc_file =     "QDCcalib_L2_2planari_penta.root";
     tdc_file =     "TDCcalib_L2_2planari_penta.root";
   }
-
+  if(run>=317){
+    map_file= "mapping_IHEP_L1_L2_2planar.root";
+    qdc_file=     "QDCcalib_L1_L2_2planar.root";
+    tdc_file=     "TDCcalib_L1_L2_2planar.root";
+  }
 
   TString tot_file1 = "delta_vth.root";
   TString tot_file2 = "ToT_calib.root";
@@ -83,22 +88,35 @@ void ana(int run, int subrun){
   float mphi[NRoc][8][NChannel];
   int mv[NRoc][8][NChannel];
   int mchip_id[NRoc][8][NChannel];
-  int mFEB_label_id[11][8][NChannel];
+  int mFEB_label_id[NRoc][8][NChannel];
   memset(mx, -1, sizeof(mx));
   memset(mv, -1, sizeof(mv));
   memset(mphi, -1, sizeof(mphi));
   memset(mchip_id, -1, sizeof(mchip_id));
   memset(mFEB_label_id, -1, sizeof(mFEB_label_id));
 
+  cout<<maptree->GetEntries()<<endl;
+  int ciao=0;
   for (int i = 0; i < maptree->GetEntries(); i++) {
+
     maptree->GetEntry(i);
+    if(pos_x*pos_v<0 && (mx[gemroc_id][SW_FEB_id][channel_id])==-1 && mv[gemroc_id][SW_FEB_id][channel_id]==-1 && gemroc_id>=11){
+      ciao++;
+    }
     mx[gemroc_id][SW_FEB_id][channel_id] = pos_x;
     mv[gemroc_id][SW_FEB_id][channel_id] = pos_v;
     mphi[gemroc_id][SW_FEB_id][channel_id] = phi;
     mchip_id[gemroc_id][SW_FEB_id][channel_id] = chip_id;
     mFEB_label_id[gemroc_id][SW_FEB_id][channel_id] = FEB_label_id;
+    //if(gemroc_id==0 && channel_id<5) cout<<gemroc_id<<" "<<SW_FEB_id<<" "<<channel_id<<" "<<mx[gemroc_id][SW_FEB_id][channel_id]<<" "<<mv[gemroc_id][SW_FEB_id][channel_id]<<endl;
   }
-
+  cout<<ciao<<"------------"<<endl;
+  if(ciao!=maptree->GetEntries()) cout<<"Check the mapping"<<endl;
+  //for(int i=0;i<8;i++){
+  //  for(int j=0;j<5;j++){
+  //    cout<<i<<" "<<j<<" "<<mx[0][i][j]<<" "<<mv[0][i][j]<<endl;
+  //  }
+  //}
   
   auto consfile = new TFile(qdc_file);
   auto constree = (TTree*)consfile->Get("tree");
@@ -254,7 +272,7 @@ void ana(int run, int subrun){
   auto ofile = new TFile(oname.c_str(),"RECREATE");
   auto otree = new TTree("tree","tree");
   
-  int channel, gemroc, FEB, strip_x, strip_v, count, timestamp, l1ts_min_tcoarse, lasttigerframenum, chip, FEB_label, tac, runNo, layer, max_count, trigg_flag;
+  int channel, gemroc, FEB, strip_x, strip_v, count, timestamp, l1ts_min_tcoarse, lasttigerframenum, chip, FEB_label, tac, runNo, layer, max_count, trigg_flag, tcoarse_min_ts;
   float charge_SH, charge_SH_uncal, charge_TOT, charge_TOT_uncal, constant, slope, qmax, delta_coarse, pos_phi, tcoarse, ecoarse, tfine, efine, ttrigg = -99999, trigg_tcoarse = -99999, tfine_uncal, efine_uncal, time, radius; 
   bool saturated = false;
   
@@ -279,6 +297,7 @@ void ana(int run, int subrun){
   otree->Branch("count",&count,"count/I");
   otree->Branch("timestamp",&timestamp,"timestamp/I");
   otree->Branch("l1ts_min_tcoarse",&l1ts_min_tcoarse,"l1ts_min_tcoarse/I");
+  otree->Branch("tcoarse_min_ts",&tcoarse_min_ts,"tcoarse_min_ts/I");
   otree->Branch("tcoarse",&tcoarse,"tcoarse/F");
   otree->Branch("ecoarse",&ecoarse,"ecoarse/F");
   otree->Branch("tfine_uncal",&tfine_uncal,"tfine_uncal/F");
@@ -329,6 +348,7 @@ void ana(int run, int subrun){
     efine_uncal = define;
     tac = dtac;
     l1ts_min_tcoarse = dl1ts_min_tcoarse;
+    tcoarse_min_ts = -dl1ts_min_tcoarse;
     lasttigerframenum = dlasttigerframenum;
     constant = cons[dgemroc][dFEB][dchannel];
     slope = mslope[dgemroc][dFEB][dchannel];

@@ -1,0 +1,17 @@
+#include "TFile.h"
+#include "TTree.h"
+#include "TMath.h"
+#include "TDirectory.h"
+#include "Riostream.h"
+#include <iostream>
+#include <fstream>
+
+void totcalib(){
+  auto file = new TFile("mapping_IHEP.root","RECREATE");
+  auto tree = new TTree("tree","tree");
+
+  int vthr;
+  float par_a, par_b, par_c, par_d, par_e;
+
+  return;
+}

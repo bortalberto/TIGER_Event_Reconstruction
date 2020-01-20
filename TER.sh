@@ -46,7 +46,10 @@ OPT_ROOT_POS="false"
 OPT_ROOT="false"
 OPT_COPY="false"
 OPT_DAQ="false"
-while getopts "DAEPGMPQFmdawphegfCV" OPTION; do
+OPT_ROOT_DAQ="false"
+OPT_EXT="false"
+OPT_EXT_i="false"
+while getopts "DAEPGMPQFmdawphegfCVqXx" OPTION; do
     case $OPTION in
 
 	w)
@@ -76,6 +79,9 @@ while getopts "DAEPGMPQFmdawphegfCV" OPTION; do
 	    echo "   -g RUN              open the merged event root file for the run"
 	    echo "   -C RUN              copy the run into thr GRAAL folder"
 	    echo "   -Q RUN SUBRUN       data quality analysis and plot"
+	    echo "   -q RUN SUBRUN       open data quality analysis and plot"
+	    echo "   -X RUN              run the extraction of the information"
+	    echo "   -x RUN FEB CHANNEL  run the extraction of the i-th channel"
 	    exit 0
 	    ;;
 
@@ -146,6 +152,15 @@ while getopts "DAEPGMPQFmdawphegfCV" OPTION; do
 	C)
 	        OPT_COPY="true"
 	       ;;
+	q)
+	        ROOT_OPT_DAQ="true"
+               ;;
+	X)
+	        OPT_EXT="true"
+	       ;;
+	x)      
+	        OPT_EXT_i="true"
+	       ;;
     esac
 done
 
@@ -195,7 +210,7 @@ fi
 if [ $OPT_DEC_MERGE = "true" ]
 then
     if [ -z $subrun_number ]; then echo "Use the command 'TER -V RUN SUBRUN ROC'"; exit; fi
-    if [ -f "${DATADIR}/SubRUN_${subrun_number}_GEMROC_4_TM.dat" ]; then
+    if [ -f "${DATADIR}/SubRUN_${subrun_number}_GEMROC_3_TM.dat" ]; then
 	hadd -f ${ANADIR}/Sub_RUN_dec_${subrun_number}.root ${ANADIR}/SubRUN_${subrun_number}_GEMROC*root
     fi
 fi
@@ -322,10 +337,34 @@ then
 	cd $TER;  
 	./bin/daq $run_number
     else
+	rm -f $ANADIR/event_till_$subrun_number.root $ANADIR/TP_event_till_$subrun_number.root
+	for isub in $(seq 0 $subrun_number); do hadd -a $ANADIR/event_till_$subrun_number.root $ANADIR/Sub_RUN_event_$isub.root;done
+	for isub in $(seq 0 $subrun_number); do hadd -a $ANADIR/TP_event_till_$subrun_number.root $ANADIR/Sub_RUN_TP_event_$isub.root;done
 	echo "./bin/daq $run_number $subrun_number";
         cd $TER;
         ./bin/daq $run_number $subrun_number
     fi
     
     cd $QUI; 
+fi
+#DAQ root open
+if [[ $ROOT_OPT_DAQ = "true" ]];
+then
+    if [ -z $run_number ]; then echo "Use the command 'TER -q RUN' or TER -q RUN"; exit; fi
+    root -l /home/ihep_data/data/raw_daq/extracted_noise_thr_$run_number.root
+fi
+
+#EXTRACTION
+if [[ $OPT_EXT = "true" ]];
+then
+    feb=$3
+    chip=$4
+    channel=$5
+    if [ -z $run_number ]; then echo "Use the command 'TER -X RUN'";exit; fi
+    cd $TER
+    if [ -z $channel ]; 
+    then ./bin/ext $run_number;
+    else ./bin/ext $run_number $feb $chip $channel;
+    fi
+    cd $QUI
 fi

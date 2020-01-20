@@ -34,6 +34,10 @@ EXEC3        = daq
 COMPONENTS3  = main_daq daq
 BIN_EXEC3     = $(addprefix $(BIN)/,$(EXEC3) )
 
+EXEC4	     = ext
+COMPONENTS4  = main_ext ext
+BIN_EXEC4    = $(addprefix $(BIN)/,$(EXEC4) )
+
 default: all
 
 # compile sources
@@ -58,6 +62,10 @@ $(BIN)/$(EXEC2): $(addprefix $(LIB)/, $(addsuffix .o, $(COMPONENTS2) ) )
 $(BIN_EXEC3):
 	$(LD) $(LDFLAGS) $^ $(ROOTLIBS) $(addprefix -L, $(LIBS)) -o $@
 $(BIN)/$(EXEC3): $(addprefix $(LIB)/, $(addsuffix .o, $(COMPONENTS3) ) )
+#4
+$(BIN_EXEC4):
+	$(LD) $(LDFLAGS) $^ $(ROOTLIBS) $(addprefix -L, $(LIBS)) -o $@
+$(BIN)/$(EXEC4): $(addprefix $(LIB)/, $(addsuffix .o, $(COMPONENTS4) ) )
 
 .PHONY : clean
 clean:
@@ -68,11 +76,12 @@ clean:
 	rm -f $(BIN_EXEC1)
 	rm -f $(BIN_EXEC2)
 	rm -f $(BIN_EXEC3)
+	rm -f $(BIN_EXEC4)
 $(LIB):
 	mkdir -p $(LIB)
 $(BIN):
 	mkdir -p $(BIN)
 installdirs: $(LIB) $(BIN)
-rec:  installdirs $(BIN_EXEC0) installdirs $(BIN_EXEC1) installdirs $(BIN_EXEC2) installdirs $(BIN_EXEC3)
+rec:  installdirs $(BIN_EXEC0) installdirs $(BIN_EXEC1) installdirs $(BIN_EXEC2) installdirs $(BIN_EXEC3) installdirs $(BIN_EXEC4)
 all: rec
 

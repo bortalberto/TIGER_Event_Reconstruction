@@ -1,0 +1,3 @@
+Inserire o meno la richiesta di installazione di ts
+Farsi che ci sia una sola dichiarazione di ANADIR e DATADIR (anche in $TER/src/common.h e in daq.h)
+Fare il GIT di GRATE

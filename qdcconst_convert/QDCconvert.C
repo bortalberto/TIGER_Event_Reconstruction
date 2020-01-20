@@ -11,7 +11,7 @@ void QDCconvert(){
     auto tree = new TTree("tree","tree");
 
     for(int layer_id = 0; layer_id <4; layer_id++){
-	for(int tig_id=1; tig_id<60; tig_id++){
+	for(int tig_id=1; tig_id<65; tig_id++){
 	    for(int chip_id=1; chip_id<3; chip_id++){
 		std::string data_folder = Form("L%i_QDC_calib/",layer_id);
 		std::string FILENAME = Form("L%dFEB%i_c%i_Efine_calib.txt",layer_id,tig_id,chip_id);
@@ -79,7 +79,27 @@ void QDCconvert(){
                     else if(tig_id==29) FEB_label = 55;
 		    else continue;
 		  }
+		  else if(layer_id==1){
+		    if     (tig_id==61) FEB_label = 0;
+		    else if(tig_id==5) FEB_label = 1;
+		    else if(tig_id==2) FEB_label = 2;
+		    else if(tig_id==21) FEB_label = 3;
+		    else if(tig_id==25) FEB_label = 4;
+		    else if(tig_id==10) FEB_label = 5;
+		    else if(tig_id==29) FEB_label = 6;
+		    else if(tig_id==34) FEB_label = 7;
+		    else if(tig_id==32) FEB_label = 8;
+		    else if(tig_id==26) FEB_label = 9;
+		    else if(tig_id==27) FEB_label = 10;
+		    else if(tig_id==22) FEB_label = 11;
+		    else if(tig_id==24) FEB_label = 12;
+		    else if(tig_id==4) FEB_label = 13;
+		    else if(tig_id==19) FEB_label = 14;
+		    else if(tig_id==30) FEB_label = 15;
+		    else continue;
+		  }
 		  else continue;
+
 		  
 		  gemroc_id = FEB_label/4;
 		  SW_FEB_id = (FEB_label%4)*2 + chip_id-1;

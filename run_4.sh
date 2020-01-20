@@ -12,18 +12,18 @@ for i in $(seq 0 20);
 do
     ts sleep 0.01
 done
-ts -N 20
+ts -N 50
 ts -df sleep 0.01
     
 #Merge Recon
 ts -df bash -c "$exe_ter -C $1"
 echo "Terminated all"
 
-for i in $(seq 0 20);
+for i in $(seq 0 50);
 do
     ts sleep 0.01
     done
-ts -N 20
+ts -N 25
 ts -df sleep 0.01
 rm /tmp/ihep_data/ts-out*
 cd $HERE

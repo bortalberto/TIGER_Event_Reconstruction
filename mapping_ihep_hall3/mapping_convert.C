@@ -60,7 +60,7 @@ void mapping_convert(){
 
     for(int layer=0; layer<3; layer++){
       //std::string FILENAME = Form("L%d_mapping.txt",layer);
-      std::string FILENAME = Form("L%d_mapping_setupL2.txt",layer);
+      std::string FILENAME = Form("L%d_mapping_setupL1L2.txt",layer);
 	std::ifstream data_file(FILENAME);
 
 	if(!data_file){
@@ -152,7 +152,7 @@ void mapping_convert(){
 */
 
 		    // L2 + 2 planari
-		    if     (FEB_label==16) HW_FEB_id = 4;
+		    /*		    if     (FEB_label==16) HW_FEB_id = 4;
 		    else if(FEB_label==17) HW_FEB_id = 17;
 		    else if(FEB_label==18) HW_FEB_id = 18;
 		    else if(FEB_label==19) HW_FEB_id = 6;
@@ -189,6 +189,67 @@ void mapping_convert(){
                     else if(FEB_label==54) HW_FEB_id = 26;
                     else if(FEB_label==55) HW_FEB_id = 29;
 		    else                   HW_FEB_id = -1;
+
+		    */
+
+		    //L2 + L1 + 3 planari
+		    
+		      if(FEB_label == 0) HW_FEB_id = 61;
+		      else if     (FEB_label==1) HW_FEB_id = 5;                                     
+		      else if(FEB_label==2) HW_FEB_id = 2;                                        
+		      else if(FEB_label==3) HW_FEB_id = 21;                                        
+		      else if(FEB_label==4) HW_FEB_id = 25;                                        
+		      else if(FEB_label==5) HW_FEB_id = 10;     
+		      else if(FEB_label==6) HW_FEB_id = 29;                                         
+		      else if(FEB_label==7) HW_FEB_id = 34;                                         
+		      else if(FEB_label==8) HW_FEB_id = 32;                                       
+		      else if(FEB_label==9) HW_FEB_id = 26;                                        
+		      else if(FEB_label==10) HW_FEB_id = 27;                                        
+		      else if(FEB_label==11) HW_FEB_id = 22;                                       
+		      else if(FEB_label==12) HW_FEB_id = 24;                               	 
+		      else if(FEB_label==13) HW_FEB_id = 4; 
+		      else if(FEB_label==14) HW_FEB_id = 19;                                      
+		      else if(FEB_label==15) HW_FEB_id = 30;
+
+		      else if     (FEB_label==16) HW_FEB_id = 4;
+                    else if(FEB_label==17) HW_FEB_id = 17;
+                    else if(FEB_label==18) HW_FEB_id = 18;
+                    else if(FEB_label==19) HW_FEB_id = 6;
+                    else if(FEB_label==20) HW_FEB_id = 9;
+                    else if(FEB_label==21) HW_FEB_id = 33;
+                    else if(FEB_label==22) HW_FEB_id = 38;
+                    //else if(FEB_label==23) HW_FEB_id = 34;                                                                                                                                                
+                    else if(FEB_label==23) HW_FEB_id = 53;
+                    else if(FEB_label==24) HW_FEB_id = 37;
+                    else if(FEB_label==25) HW_FEB_id = 36;
+                    else if(FEB_label==26) HW_FEB_id = 50;
+                    else if(FEB_label==27) HW_FEB_id = 1;
+                    else if(FEB_label==28) HW_FEB_id = 2;
+                    else if(FEB_label==29) HW_FEB_id = 19;
+                    else if(FEB_label==30) HW_FEB_id = 52;
+                    else if(FEB_label==31) HW_FEB_id = 32;
+                    else if(FEB_label==32) HW_FEB_id = 30;
+                    else if(FEB_label==33) HW_FEB_id = 26;
+                    else if(FEB_label==34) HW_FEB_id = 27;
+                    else if(FEB_label==35) HW_FEB_id = 56;
+                    else if(FEB_label==36) HW_FEB_id = 25;
+                    //else if(FEB_label==37) HW_FEB_id = 57;                                                                                                                                                
+                    else if(FEB_label==37) HW_FEB_id = 49;
+                    else if(FEB_label==38) HW_FEB_id = 12;
+                    else if(FEB_label==39) HW_FEB_id = 7;
+                    else if(FEB_label==40) HW_FEB_id = 20;
+                    else if(FEB_label==41) HW_FEB_id = 21;
+                    else if(FEB_label==42) HW_FEB_id = 24;
+                    else if(FEB_label==43) HW_FEB_id = 3;
+                    else if(FEB_label==48) HW_FEB_id = 32;
+                    else if(FEB_label==49) HW_FEB_id = 10;
+                    else if(FEB_label==52) HW_FEB_id = 9;
+                    else if(FEB_label==53) HW_FEB_id = 28;
+                    else if(FEB_label==54) HW_FEB_id = 26;
+                    else if(FEB_label==55) HW_FEB_id = 29;
+                    else                   HW_FEB_id = -1;
+		    
+
 
 		    tree->Fill();
 		}

@@ -91,6 +91,8 @@ class reader:
         flag_swap1=False
         flag_swap2=False
 
+#        count_mismatch=0
+
         with open(path, 'rb') as f:
             for i in range(0, statinfo.st_size // 8):
                     data = f.read(8)
@@ -185,6 +187,7 @@ class reader:
                             #lsl1ts_min_tcoarse.append(LOCAL_L1_TIMESTAMP-tcoarse)
 
                             count_mismatch = 0
+                            
                             #if(l1timestamp < 1566):
                                 #if(tcoarse > 64150):
                                    # tcoarse = tcoarse - 2**16
@@ -205,15 +208,15 @@ class reader:
                             lsl1ts_min_tcoarse_to_append = LOCAL_L1_TIMESTAMP - tcoarse
                             l1count_new_to_append = l1count
                             
-#                            if(not(((LOCAL_L1_TIMESTAMP - tcoarse) > 1299 and (LOCAL_L1_TIMESTAMP - tcoarse) < 1567) or (LOCAL_L1_TIMESTAMP - tcoarse) < -63970)):
- #                               flag_swap1 = True
+                            if(not(((LOCAL_L1_TIMESTAMP - tcoarse) > 1299 and (LOCAL_L1_TIMESTAMP - tcoarse) < 1567) or (LOCAL_L1_TIMESTAMP - tcoarse) < -63970)):
+                                flag_swap1 = True
                             if(flag_swap1):
                                 if((int_x>>59)&0x7 > 3):
                                     lsl1ts_min_tcoarse_to_append = pre_timestamp - tcoarse
                                     l1count_new_to_append = l1count-1
                                     count_mismatch = 1
-                            #        if(not(((lsl1ts_min_tcoarse_to_append) > 1299 and (lsl1ts_min_tcoarse_to_append) < 1567) or (lsl1ts_min_tcoarse_to_append) < -63970)): 
-                             #           flag_swap2 = True
+                                    #if(not(((lsl1ts_min_tcoarse_to_append) > 1299 and (lsl1ts_min_tcoarse_to_append) < 1567) or (lsl1ts_min_tcoarse_to_append) < -63970)): 
+                                        #flag_swap2 = True
                             
                             if(flag_swap2):
                                 if((int_x>>59)&0x7 > 3):

@@ -20,22 +20,22 @@ const int N_TIGER = 2*N_FEB;
 const int N_CHIP = 2;
 const int signal_time_cut_min = -32;
 const int signal_time_cut_max =  16;
-const int noise_time_cut_min_left  = -175;
+const int noise_time_cut_min_left  = -120;
 const int noise_time_cut_max_left  =  -70;
-const int noise_time_cut_min_right =   0;//40;
-const int noise_time_cut_max_right =   0;//80;
+const int noise_time_cut_min_right =   80;//40;
+const int noise_time_cut_max_right =   80;//80;
 const int signal_time_cut_min_noTP      = -1420;
-const int signal_time_cut_max_noTP      = -1370;
-const int noise_time_cut_min_left_noTP  = -1490;
-const int noise_time_cut_max_left_noTP  = -1430;
-const int noise_time_cut_min_right_noTP = 0;//-1240;
-const int noise_time_cut_max_right_noTP = 0;//-1200;
-const int charge_cut = 1;
+const int signal_time_cut_max_noTP      = -1380;
+const int noise_time_cut_min_left_noTP  = -1500;
+const int noise_time_cut_max_left_noTP  = -1450;
+const int noise_time_cut_min_right_noTP = -1300;//-1240;
+const int noise_time_cut_max_right_noTP = -1300;
+const int charge_cut = -5;
 const int TIME_BIN   = 6.25; //ns
 const int NCHANNEL   = 64;
 const double time_window_noise=(noise_time_cut_max_left-noise_time_cut_min_left + noise_time_cut_max_right-noise_time_cut_min_right)*6.25e-9; //seconds                                                                   
 const double time_window_noise_noTP=(noise_time_cut_max_left_noTP-noise_time_cut_min_left_noTP + noise_time_cut_max_right_noTP-noise_time_cut_min_right_noTP)*6.25e-9; //seconds                                                                   
-const int thr_ch = 62;
+int thr_ch = 62;
                                                           
 //PARAMETERS FOR THE SELECTION OF BAD CHIPS
 const double max_rate = 10000;
@@ -84,8 +84,27 @@ void ext(int run, int FEB_i, int chip_i, int ch_i){
   bool print_here = false;
   inFile = DataDir+to_string(run)+"/event.root";
   ch.Add(inFile);
-  //noise                                                                                                                                                                                                                
-  double nhitsofnoise = ch.GetEntries(Get_Cut(3,FEB_i,chip_i,ch_i));
+  //noise                  
+  int n_bin_noise=100;
+  TH1D *h_noise;
+  TString name_noise = "h_noise";
+  if(no_TP){
+    n_bin_noise= noise_time_cut_max_right_noTP - noise_time_cut_min_left_noTP;
+    h_noise = new TH1D("h_noise","h_noise",n_bin_noise,noise_time_cut_min_left_noTP,noise_time_cut_max_right_noTP);
+    //ch.Draw("tcoarse_min_ts>>h_noise",Get_Cut(3,FEB_i,chip_i,ch_i),"goff");
+    //cout<<Get_Cut(3,FEB_i,chip_i,ch_i)<<endl;
+  }
+  if(!no_TP) {
+    n_bin_noise= noise_time_cut_max_right - noise_time_cut_min_left;
+    h_noise = new TH1D("h_noise","h_noise",n_bin_noise,noise_time_cut_max_right,noise_time_cut_min_left);
+    //ch.Draw("t_min_ttrigg>>h_noise",Get_Cut(3,FEB_i,chip_i,ch_i),"goff");
+    //cout<<Get_Cut(3,FEB_i,chip_i,ch_i)<<endl;
+  }
+  if(print_here)cout<<Get_Command(2,name_noise)<<endl;
+  if(print_here)cout<<Get_Cut(3,FEB_i,chip_i,ch_i)<<endl;
+  ch.Draw(Get_Command(2,name_noise),Get_Cut(3,FEB_i,chip_i,ch_i),"goff");
+  //double nhitsofnoise = ch.GetEntries(Get_Cut(3,FEB_i,chip_i,ch_i));
+  double nhitsofnoise = h_noise->GetEntries();
   double rate = 0;
   if(!no_TP) rate = nhitsofnoise/time_window_noise/ch.GetEntries();
   else       rate = nhitsofnoise/time_window_noise_noTP/ch.GetEntries();
@@ -97,7 +116,7 @@ void ext(int run, int FEB_i, int chip_i, int ch_i){
   TString h_name="h_charge";
   TH1D *h_charge = new TH1D(h_name,h_name,n_bin,min_charge_hist,max_charge_hist);
   TF1 *f_thr = new TF1("f_thr","[0]/(1+exp(-(x-[1])/[2]))");
-  ch.Draw(Get_Command(0,h_name),Get_Cut(4,FEB_i,chip_i,ch_i));
+  ch.Draw(Get_Command(0,h_name),Get_Cut(4,FEB_i,chip_i,ch_i),"goff");
   double threshold = 0;
   double thr_wid = 0;
   if(h_charge->GetEntries()){
@@ -132,7 +151,7 @@ void ext(int run, int FEB_i, int chip_i, int ch_i){
       break;
     }
   }
-  //cout<<FEB_i<<" "<<chip_i<<" "<<ch_i<<" "<<rate<<" "<<threshold<<" "<<mx<<" "<<mv<<endl;
+  if(print_here)cout<<"FEB: "<<FEB_i<<" Chip: "<<chip_i<<" Channel: "<<ch_i<<" Rate: "<<rate<<" Thr: "<<threshold<<" StripX: "<<mx<<" StripV: "<<mv<<endl;
   outFile = DataDir+to_string(run)+"/extraction.txt";
   outStream.open(outFile,std::ios::out |std::ios::app);
   outStream<<FEB_i<<" "<<chip_i<<" "<<ch_i<<" "<<rate<<" "<<threshold<<" "<<thr_wid<<" "<<mx<<" "<<mv<<endl;
@@ -215,7 +234,7 @@ bool init(int run){
   TString bash_command = "rm "+outFile;
   gSystem->Exec(bash_command);
   //Set ts number of thread
-  gSystem->Exec("ts -S 20");
+  gSystem->Exec("ts -S 40");
 
   return true;
 }
@@ -230,6 +249,7 @@ TString Get_Cut(int caso, int var1, int var2){
 
 TString Get_Cut(int caso, int var1, int var2, int var3){
   TString cut = "ciao";
+  if(no_TP) thr_ch = -1;
   switch(caso){
   case 0:
     //Noise check
@@ -253,7 +273,6 @@ TString Get_Cut(int caso, int var1, int var2, int var3){
   case 4:
     //Noise check per channel 
     cut = Form("channel!=%d&&FEB_label==%d&&chip==%d&&charge_SH>%d && channel==%d",thr_ch,var1,var2,charge_cut,var3);
-    cout<<cut<<endl;
     return cut;
   case 5:
     cut = Form("TP_eff<%f && FEB==%d && chip==%d", min_efficiency, var1, var2);
@@ -279,6 +298,10 @@ TString Get_Command(int caso, TString h_name, int var){
     //TP comunication efficiency
     //command = Form("eff_Tpm1[%d]",var) + (string)">>" + h_name;
     command = "TP_eff>>"+h_name;
+    return command;
+  case 2: 
+    if(no_TP)  command = "tcoarse_min_ts>>"+h_name;
+    if(!no_TP) command = "t_min_ttrigg>>"+h_name;
     return command;
   default:
     cout<<"No command has been selected"<<endl;

@@ -48,8 +48,7 @@ OPT_COPY="false"
 OPT_DAQ="false"
 OPT_ROOT_DAQ="false"
 OPT_EXT="false"
-OPT_EXT_i="false"
-while getopts "DAEPGMPQFmdawphegfCVqXx" OPTION; do
+while getopts "DAEPGMPQFmdawphegfCVXx" OPTION; do
     case $OPTION in
 
 	w)
@@ -69,6 +68,9 @@ while getopts "DAEPGMPQFmdawphegfCVqXx" OPTION; do
 	    #echo "   -Q RUN SUBRUN       Associate the time of each TIGER to its TP -> run post_event.C"
 	    #echo "   -G RUN SUBRUN       Run decode ana event post_event"
 	    echo "   -P RUN SUBRUN       RUN ana event"
+	    echo "   -Q RUN SUBRUN       data quality analysis and plot"
+            echo "   -X RUN              run the extraction of the information"
+            echo "   -X RUN FEB CHANNEL  run the extraction of the i-th channel"
 	    echo "   -M                  make clean all"
 	    echo "   -m                  make"
 	    echo "   -f RUN SUBRUN ROC   open the decoded      root file for the run and subrun and roc given"
@@ -77,11 +79,10 @@ while getopts "DAEPGMPQFmdawphegfCVqXx" OPTION; do
 	    echo "   -e RUN SUBRUN       open the event        root file for the run and subrun given"
 	    echo "   -p RUN SUBRUN       open the post_event   root file for the run and subrun given"
 	    echo "   -g RUN              open the merged event root file for the run"
+            echo "   -x RUN              open the channel ana  root file for the run"
 	    echo "   -C RUN              copy the run into thr GRAAL folder"
-	    echo "   -Q RUN SUBRUN       data quality analysis and plot"
-	    echo "   -q RUN SUBRUN       open data quality analysis and plot"
-	    echo "   -X RUN              run the extraction of the information"
-	    echo "   -x RUN FEB CHANNEL  run the extraction of the i-th channel"
+
+ 
 	    exit 0
 	    ;;
 
@@ -152,14 +153,11 @@ while getopts "DAEPGMPQFmdawphegfCVqXx" OPTION; do
 	C)
 	        OPT_COPY="true"
 	       ;;
-	q)
+	x)
 	        ROOT_OPT_DAQ="true"
                ;;
 	X)
 	        OPT_EXT="true"
-	       ;;
-	x)      
-	        OPT_EXT_i="true"
 	       ;;
     esac
 done
@@ -347,24 +345,22 @@ then
     
     cd $QUI; 
 fi
-#DAQ root open
-if [[ $ROOT_OPT_DAQ = "true" ]];
-then
-    if [ -z $run_number ]; then echo "Use the command 'TER -q RUN' or TER -q RUN"; exit; fi
-    root -l /home/ihep_data/data/raw_daq/extracted_noise_thr_$run_number.root
-fi
-
 #EXTRACTION
 if [[ $OPT_EXT = "true" ]];
 then
     feb=$3
     chip=$4
     channel=$5
-    if [ -z $run_number ]; then echo "Use the command 'TER -X RUN'";exit; fi
+    if [ -z $run_number ]; then echo "Use the command 'TER -X RUN'";exit;fi
     cd $TER
-    if [ -z $channel ]; 
-    then ./bin/ext $run_number;
+    if [ -z $channel ]; then ./bin/ext $run_number;
     else ./bin/ext $run_number $feb $chip $channel;
     fi
     cd $QUI
+fi
+#Extraction root open 
+if [[ $ROOT_OPT_DAQ = "true" ]];
+then
+    if [ -z $run_number ]; then echo "Use the command 'TER -q RUN' or TER -q RUN"; exit; fi
+    root -l /home/ihep_data/data/raw_daq/extracted_noise_thr_$run_number.root
 fi

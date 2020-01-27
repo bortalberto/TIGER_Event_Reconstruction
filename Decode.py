@@ -44,6 +44,7 @@ class reader:
                 int local_l1_count;\
                 int count_mismatch;\
                 float delta_coarse;\
+                int count_missing_trailer;\
                 };')
         from ROOT import TreeStruct
 
@@ -64,6 +65,7 @@ class reader:
         statinfo = os.stat(path)
         packet_header = -1
         packet_tailer = -1
+        packet_udp = -1
         l1count = -1
 
         l1count_new=[]
@@ -84,6 +86,8 @@ class reader:
         gemrocid = -1
 
         pre_timestamp = 0
+
+        count_missing_trailer = 0
 
         hitcounter=0
         max_hitcount=1000000000000
@@ -145,20 +149,42 @@ class reader:
 
                     if(self.MODE == 1):
                         if (((int_x & 0xE000000000000000)>>61) == 0x6):
+                            #print "enter header"
                             packet_header = 1
                             LOCAL_L1_COUNT_31_6 = int_x >> 32 & 0x3FFFFFF
                             LOCAL_L1_COUNT_5_0  = int_x >> 24 & 0x3F
                             LOCAL_L1_COUNT      = (LOCAL_L1_COUNT_31_6 << 6) + LOCAL_L1_COUNT_5_0
                             LOCAL_L1_TIMESTAMP  = int_x & 0xFFFF
+                           # print "local l1 count {}".format(LOCAL_L1_COUNT)
                             pre_pretimestamp = pre_timestamp
                             pre_timestamp = l1timestamp
                             pre_l1count = l1count
                             l1count = LOCAL_L1_COUNT
                             l1timestamp = LOCAL_L1_TIMESTAMP
-                            
-                        if(((int_x & 0xC000000000000000)>>62) == 0x0 and packet_header == 1 and packet_tailer == 0):
-                            LOCAL_L1_TS_minus_TIGER_COARSE_TS = LOCAL_L1_TIMESTAMP - ((int_x >> 32) & 0xFFFF)
 
+                            if len(lschannel_id)>0:
+                                count_missing_trailer = count_missing_trailer + 1
+                            
+                                lschannel_id=[]
+                                lstac_id=[]
+                                lstcoarse=[]
+                                lsecoarse=[]
+                                lstfine=[]
+                                lsefine=[]
+                                lstcoarse_10b=[]
+                                lscharge_SH=[]
+                                lstigerid=[]
+                                lsl1ts_min_tcoarse=[]
+                                lslasttigerframenum=[]
+                                lscount_mismatch=[]
+                                l1count_new=[]
+                                lsdelta_coarse=[]
+                            
+
+
+                        if(((int_x & 0xC000000000000000)>>62) == 0x0 and packet_header == 1 and packet_udp != 1):
+                            LOCAL_L1_TS_minus_TIGER_COARSE_TS = LOCAL_L1_TIMESTAMP - ((int_x >> 32) & 0xFFFF)
+                            #print "enter DATA"
                             lstigerid.append((int_x>>59)&0x7)
                             lschannel_id.append((int_x>>50)&0x3F)
                             lstac_id.append((int_x>>48)&0x3)
@@ -200,33 +226,38 @@ class reader:
                             lsl1ts_min_tcoarse_to_append = LOCAL_L1_TIMESTAMP - tcoarse
                             l1count_new_to_append = l1count
                             
-                            if(not(((LOCAL_L1_TIMESTAMP - tcoarse) > 1299 and (LOCAL_L1_TIMESTAMP - tcoarse) < 1567) or (LOCAL_L1_TIMESTAMP - tcoarse) < -63970)):
+                            if(not( ( (LOCAL_L1_TIMESTAMP - tcoarse ) > 1299 and (LOCAL_L1_TIMESTAMP -  tcoarse)  < 1567) or ( (LOCAL_L1_TIMESTAMP - tcoarse) < -63960 and (LOCAL_L1_TIMESTAMP - tcoarse) > -64240 ))):
                                 flag_swap1 = True
                             if(flag_swap1):
                                 if((int_x>>59)&0x7 > 3):
                                     lsl1ts_min_tcoarse_to_append = pre_timestamp - tcoarse
                                     l1count_new_to_append = l1count-1
                                     count_mismatch = 1
-                                    if(not(((lsl1ts_min_tcoarse_to_append) > 1299 and (lsl1ts_min_tcoarse_to_append) < 1567) or (lsl1ts_min_tcoarse_to_append) < -63970)): 
+                                    if(not(((lsl1ts_min_tcoarse_to_append) > 1299 and (lsl1ts_min_tcoarse_to_append) < 1567) or ((lsl1ts_min_tcoarse_to_append) < -63960 and (lsl1ts_min_tcoarse_to_append) > -64240))): 
                                         flag_swap2 = True
-                            
+                                        flag_swap1 = False
+                                        #print "{} and {}".format(lsl1ts_min_tcoarse_to_append, l1count)
                             if(flag_swap2):
                                 if((int_x>>59)&0x7 > 3):
                                     lsl1ts_min_tcoarse_to_append = pre_pretimestamp - tcoarse
                                     l1count_new_to_append = l1count-2
                                     count_mismatch = 2
-                                    
+                                    print "{} and {}".format(GEMROC_ID,run)
+                                    #sys.exit()
+
                             if(lsl1ts_min_tcoarse_to_append < 0):
-                                tcoarse = tcoarse - 2**16
+                                #tcoarse = lsl1ts_min_tcoarse_to_append + 2**16
                                 if((int_x>>59)&0x7 > 3):
                                     if flag_swap1:
-                                        lsl1ts_min_tcoarse_to_append = pre_timestamp -tcoarse
+                                        lsl1ts_min_tcoarse_to_append = pre_timestamp -tcoarse + 2**16
                                     if flag_swap2:
-                                        lsl1ts_min_tcoarse_to_append = pre_pretimestamp -tcoarse
+                                        lsl1ts_min_tcoarse_to_append = pre_pretimestamp -tcoarse + 2**16
                                     if not (flag_swap1 or flag_swap2):
-                                        lsl1ts_min_tcoarse_to_append = LOCAL_L1_TIMESTAMP - tcoarse
+                                        lsl1ts_min_tcoarse_to_append = LOCAL_L1_TIMESTAMP - tcoarse + 2**16
                                 else:
-                                    lsl1ts_min_tcoarse_to_append = LOCAL_L1_TIMESTAMP - tcoarse
+                                    if(lsl1ts_min_tcoarse_to_append > -60000):
+                                        print "{} and {}".format(lsl1ts_min_tcoarse_to_append, l1count)
+                                    lsl1ts_min_tcoarse_to_append = LOCAL_L1_TIMESTAMP - tcoarse + 2**16
 
                             lsl1ts_min_tcoarse.append(lsl1ts_min_tcoarse_to_append)
                             l1count_new.append(l1count_new_to_append)
@@ -234,21 +265,25 @@ class reader:
 
                             lscount_mismatch.append(count_mismatch)
                             lstcoarse.append(tcoarse)
-
+                            if flag_swap1 and flag_swap2:
+                                print "ERROR ON SWAP {}".format(count_mismatch) 
 
 
                             lscharge_SH.append(int_x & 0x3FF)
 
                         if(((int_x & 0xE000000000000000)>>61) == 0x7):
+                            #print "enter trailer"
                             packet_tailer = 1
                             gemrocid = (int_x >> 32)&0x1F
                            
 
-                        #if(((int_x & 0xF000000000000000)>>60) == 0x4):
+                        if(((int_x & 0xF000000000000000)>>60) == 0x4):
+                            #print "enter UDP"
+                            packet_udp = 1
                             #pre_udp_packet = udp_packet
                             #udp_packet = (((int_x >> 32)&0xFFFFF) + ((int_x >> 0) & 0xFFFFFFF))
 
-                        if(packet_header == 1 and packet_tailer == 1):
+                        if(packet_header == 1 and  packet_udp == 1):
                             for x in range(len(lstac_id)):
                                 mystruct.channel_id = lschannel_id.pop()
                                 mystruct.tac_id = lstac_id.pop()
@@ -264,8 +299,8 @@ class reader:
                                 mystruct.count_mismatch = lscount_mismatch.pop()
                                 mystruct.count_new = l1count_new.pop()
                                 mystruct.delta_coarse = lsdelta_coarse.pop()
-
-
+                                
+                                mystruct.count_missing_trailer = count_missing_trailer
                                 mystruct.local_l1_count = LOCAL_L1_COUNT
                                 mystruct.count_ori = l1count
                                 mystruct.count = mystruct.count_new
@@ -281,10 +316,12 @@ class reader:
                                 hitcounter = hitcounter + 1
                                 if(hitcounter>max_hitcount): 
                                     continue
+                                #print "PRE FILL"
                                 tree.Fill()
+                                #print "POST FILL"
                             packet_header = 0
                             packet_tailer = 0
-
+                            packet_udp = 0
 
         rootFile.Write()
         rootFile.Close()

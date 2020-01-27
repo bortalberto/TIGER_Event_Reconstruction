@@ -368,7 +368,9 @@ void ana(int run, int subrun){
 
     //the units for tfine and efine with correction are in ns
     tfine = (tfine_uncal - TDCcons_Tmin[dgemroc][dFEB][dchannel][tac]) * TDCcons_Tbin[dgemroc][dFEB][dchannel][tac];
+    if(tfine>10 || tfine<-5) tfine=0;
     efine = (efine_uncal - TDCcons_Emin[dgemroc][dFEB][dchannel][tac]) * TDCcons_Ebin[dgemroc][dFEB][dchannel][tac];
+    if(efine>10 || efine<-5) efine=0;
 
     //TOT Calibration
     TF1 *f_tot = new TF1("f","[4]*exp([0]*x+[1])+[2]+[3]*x",0,500);

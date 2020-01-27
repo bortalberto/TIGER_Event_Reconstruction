@@ -401,6 +401,7 @@ void event(int run, int subrun){
       //Check if there are BAD event due to ROC problem --> S/H only !!!
       //if(ddelta_coarse!=22 && ddelta_coarse!=21) continue; -> modified GM - 16/08/19 Scan Integration time
       //if(ddelta_coarse!=22 && ddelta_coarse!=21 && ddelta_coarse!=25 && ddelta_coarse!=26 && ddelta_coarse!=30 && ddelta_coarse!=34 && ddelta_coarse!=38 && ddelta_coarse!=42 && ddelta_coarse!=18) continue;
+      if(ddelta_coarse!=25 && ddelta_coarse!=26) continue;
       //if(DEBUG) std::cout << "DEBUG::Going to push_back" << std::endl;
       
       tcount           .push_back(dcount           );

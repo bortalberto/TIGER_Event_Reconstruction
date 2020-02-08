@@ -228,7 +228,7 @@ class reader:
                             if(not( ( lsl1ts_min_tcoarse_to_append > 1299 and lsl1ts_min_tcoarse_to_append  < 1567) or ( lsl1ts_min_tcoarse_to_append < -63960 and lsl1ts_min_tcoarse_to_append > -64240 ))):
                                 
                                 if firstPacket:       ## avoid packets correction for first packet
-                                    pass              ## wrong entries in first packet should be discarded since they cannot be corrected
+                                    continue          ## wrong entries in first packet are discarded since they cannot be corrected
                                 else:
 
                                     #print("Try SWAP 1")                          ## try swap packets by 1

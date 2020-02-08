@@ -10,7 +10,7 @@ bool check_communication = general_check * true;
 bool check_L1 = true;
 bool check_L2 = true;
 bool check_planar = false;
-bool no_TP = false;
+bool no_TP = true;
 
 //PARAMETERS FOR THE EVENT/HITS SELECTION
 const int INIT_FEB =  0; //0;

@@ -45,14 +45,10 @@ class reader:
                 int count_mismatch;\
                 float delta_coarse;\
                 int count_missing_trailer;\
-                int subRunNo;\
                 };')
         from ROOT import TreeStruct
 
         rname = path.replace(".dat",".root")
-
-        subRunNo = int(path.split("_")[7])
-        #print subRunNo
 
         rootFile = ROOT.TFile(rname, 'recreate')
         tree = ROOT.TTree('tree', '')
@@ -160,7 +156,7 @@ class reader:
                             LOCAL_L1_COUNT_5_0  = int_x >> 24 & 0x3F
                             LOCAL_L1_COUNT      = (LOCAL_L1_COUNT_31_6 << 6) + LOCAL_L1_COUNT_5_0
                             LOCAL_L1_TIMESTAMP  = int_x & 0xFFFF
-                            print("local l1 count {}".format(LOCAL_L1_COUNT))
+                            #print("local l1 count {}".format(LOCAL_L1_COUNT))
                             pre_pretimestamp = pre_timestamp
                             pre_timestamp = l1timestamp
                             pre_l1count = l1count
@@ -198,8 +194,6 @@ class reader:
                             lsefine.append(int_x & 0x3FF)
                             lslasttigerframenum.append((int_x >> 56)& 0x7)
 
-                            
-                            lscharge_SH.append(int_x & 0x3FF)
                             temp_ecoarse = (int_x >> 20)&0x3FF
                             lstcoarse_10b.append(((int_x>>32)&0x3FF))
                             temp_tcoarse = ((int_x>>32)&0x3FF)
@@ -210,95 +204,108 @@ class reader:
                                 lsdelta_coarse.append(((int_x >> 20)&0x3FF) - ((int_x >> 32)&0x3FF))
                             else:
                                 lsdelta_coarse.append(((int_x >> 20)&0x3FF) - ((int_x >> 32)&0x3FF) + 1024)
-                            
-                            lstcoarse.append(tcoarse)
-
-
-
-
-                            ########################################
-                            ##         PACKETS MATCHING           ##
-                            ########################################
+                            #lsl1ts_min_tcoarse.append(LOCAL_L1_TIMESTAMP-tcoarse)
 
                             count_mismatch = 0
+                            #if(l1timestamp < 1566):
+                                #if(tcoarse > 64150):
+                                   # tcoarse = tcoarse - 2**16
                             
+                            #if((LOCAL_L1_TIMESTAMP-tcoarse) < 1300 or (LOCAL_L1_TIMESTAMP-tcoarse) > 1600):
+                            #    if((pre_timestamp-tcoarse) < 1300 or (pre_timestamp-tcoarse) > 1600):
+                            #        count_mismatch = 2
+                            #        lsl1ts_min_tcoarse.append(pre_pretimestamp-tcoarse)
+                            #        l1count_new.append(l1count-2)
+                            #    else:
+                            #        count_mismatch = 1
+                            #        lsl1ts_min_tcoarse.append(pre_timestamp-tcoarse)
+                            #        l1count_new.append(l1count-1)
+                            #else:
+                            #    lsl1ts_min_tcoarse.append(LOCAL_L1_TIMESTAMP-tcoarse)
+                            #    l1count_new.append(l1count)
+
                             lsl1ts_min_tcoarse_to_append = LOCAL_L1_TIMESTAMP - tcoarse
                             l1count_new_to_append = l1count
                             
                             if(not( ( lsl1ts_min_tcoarse_to_append > 1299 and lsl1ts_min_tcoarse_to_append  < 1567) or ( lsl1ts_min_tcoarse_to_append < -63960 and lsl1ts_min_tcoarse_to_append > -64240 ))):
                                 
-                                if firstPacket:       ## avoid packets correction for first packet
-                                    pass              ## wrong entries in first packet should be discarded since they cannot be corrected
-                                else:
-
-                                    #print("Try SWAP 1")                          ## try swap packets by 1
+                                if flag_swap2==False and firstPacket==False:       ## avoid packets correction for first packet
+                                    
                                     temp_diff = pre_timestamp - tcoarse
                                     if ( ( temp_diff  > 1299 and temp_diff  < 1567) or ( temp_diff < -63960 and temp_diff > -64240 )):
                                         if flag_swap1==False:
                                             print("SWAP 1 activated")
                                         flag_swap1 = True
-                                        flag_swap2 = False
                                     else:
-                                        #print("Try SWAP 2")                      ## try swap packets by 2
-                                        temp_diff = pre_pretimestamp - tcoarse
-                                        if ( ( temp_diff  > 1299 and temp_diff  < 1567) or ( temp_diff < -63960 and temp_diff > -64240 )):
-                                            if flag_swap2==False:
-                                                print("SWAP 2 activated")
-                                            flag_swap2 = True
-                                            flag_swap1 = False
-                                        else:
-                                            print("We have a problem (L1_count={})!!!!!!!!!!!!!!!!!!!!!!!!".format(LOCAL_L1_COUNT))
+                                        print("We have a problem (1)")
 
-
-                                if(flag_swap1):                                   ## apply SWAP by 1 packet
+                                if(flag_swap1):
                                     if((int_x>>59)&0x7 > 3):
-                                        lsl1ts_min_tcoarse_to_append = pre_timestamp - tcoarse                ## use l1ts of previous packet
-                                        l1count_new_to_append = l1count - 1                                   ## use l1count of previous packet
+                                        lsl1ts_min_tcoarse_to_append = pre_timestamp - tcoarse
+                                        l1count_new_to_append = l1count-1
                                         count_mismatch = 1
+                                        
+                                        if(not(((lsl1ts_min_tcoarse_to_append) > 1299 and (lsl1ts_min_tcoarse_to_append) < 1567) or ((lsl1ts_min_tcoarse_to_append) < -63960 and (lsl1ts_min_tcoarse_to_append) > -64240))): 
+                                            temp_diff = pre_pretimestamp - tcoarse
+                                            if ( ( temp_diff  > 1299 and temp_diff  < 1567) or ( temp_diff < -63960 and temp_diff > -64240 )):
+                                            
+                                                print("SWAP 2 activated")
+                                                flag_swap2 = True
+                                                flag_swap1 = False
+                                                #print "{} and {}".format(lsl1ts_min_tcoarse_to_append, l1count)
+                                            else:
+                                                print("We have a problem (2)")
 
-                                if(flag_swap2):                                   ## apply SWAP by 2 packets
+                                if(flag_swap2):
                                     if((int_x>>59)&0x7 > 3):
-                                        lsl1ts_min_tcoarse_to_append = pre_pretimestamp - tcoarse             ## use l1ts of 2 previous packet
-                                        l1count_new_to_append = l1count - 2                                   ## use l1count of 2 previous packet
+                                        lsl1ts_min_tcoarse_to_append = pre_pretimestamp - tcoarse
+                                        l1count_new_to_append = l1count-2
                                         count_mismatch = 2
+                                        #print ("{} and {}".format(self.GEMROC_ID,run))
+                                        #sys.exit()
+
                             
 
-                            if(lsl1ts_min_tcoarse_to_append < 0):                        ## try to correct counters roll-over
+                            if(lsl1ts_min_tcoarse_to_append < 0):
                                 #tcoarse = lsl1ts_min_tcoarse_to_append + 2**16
                                 if((int_x>>59)&0x7 > 3):
                                     if flag_swap1:
-                                        lsl1ts_min_tcoarse_to_append = pre_timestamp - tcoarse + 2**16
+                                        lsl1ts_min_tcoarse_to_append = pre_timestamp -tcoarse + 2**16
                                     if flag_swap2:
-                                        lsl1ts_min_tcoarse_to_append = pre_pretimestamp - tcoarse + 2**16
+                                        lsl1ts_min_tcoarse_to_append = pre_pretimestamp -tcoarse + 2**16
                                     if not (flag_swap1 or flag_swap2):
                                         lsl1ts_min_tcoarse_to_append = LOCAL_L1_TIMESTAMP - tcoarse + 2**16
                                 else:
+                                    #if(lsl1ts_min_tcoarse_to_append > -60000):
+                                    #print ("{} and {}".format(lsl1ts_min_tcoarse_to_append, l1count))
                                     lsl1ts_min_tcoarse_to_append = LOCAL_L1_TIMESTAMP - tcoarse + 2**16
-
-                            
 
                             lsl1ts_min_tcoarse.append(lsl1ts_min_tcoarse_to_append)
                             l1count_new.append(l1count_new_to_append)
 
 
                             lscount_mismatch.append(count_mismatch)
+                            lstcoarse.append(tcoarse)
+                            
+                            #if flag_swap1 and flag_swap2:
+                            #print "ERROR ON SWAP {}".format(count_mismatch) 
 
 
+                            lscharge_SH.append(int_x & 0x3FF)
 
-                        if(((int_x & 0xE000000000000000)>>61) == 0x7):             ## TRAILER WORD --> sometimes is missing --> DO NOT USE
+                        if(((int_x & 0xE000000000000000)>>61) == 0x7):
                             #print "enter trailer"
                             packet_tailer = 1
                             gemrocid = (int_x >> 32)&0x1F
                            
 
-                        if(((int_x & 0xF000000000000000)>>60) == 0x4):             ## UDP WORD --> used to flag end of packet
+                        if(((int_x & 0xF000000000000000)>>60) == 0x4):
                             #print "enter UDP"
                             packet_udp = 1
                             #pre_udp_packet = udp_packet
                             #udp_packet = (((int_x >> 32)&0xFFFFF) + ((int_x >> 0) & 0xFFFFFFF))
 
-
-                        if(packet_header == 1 and  packet_udp == 1):               ## Fill ROOT file
+                        if(packet_header == 1 and  packet_udp == 1):
                             for x in range(len(lstac_id)):
                                 mystruct.channel_id = lschannel_id.pop()
                                 mystruct.tac_id = lstac_id.pop()
@@ -320,10 +327,9 @@ class reader:
                                 mystruct.count_ori = l1count
                                 mystruct.count = mystruct.count_new
                                 mystruct.timestamp = l1timestamp
-                                mystruct.gemroc_id = self.GEMROC_ID    # previously was gemrocid value from trailer word
+                                mystruct.gemroc_id = self.GEMROC_ID    # previously was gemrocid
                                 mystruct.runNo = self.RUN
-                                mystruct.subRunNo = subRunNo
-
+                                
                                 """
                                 if(gemrocid<4):
                                     mystruct.layer_id = 1
@@ -332,7 +338,6 @@ class reader:
                                 if(gemrocid>11):
                                     mystruct.layer_id = 0
                                 """
-
                                 if(self.GEMROC_ID<4):
                                     mystruct.layer_id = 1
                                 elif(self.GEMROC_ID>3):
@@ -351,11 +356,10 @@ class reader:
                             packet_udp = 0
                             firstPacket = False
 
-
-        #print("Writing to ROOT file...")
+        print("Writing to ROOT file...")
         rootFile.Write()
         rootFile.Close()
-        #print("ROOT file written and closed.\n")
+        print("ROOT file written and closed.\n")
 
 
 import sys

@@ -1,7 +1,7 @@
 ANADIR="/dati/Data_CGEM_IHEP_Integration_2019/raw_root/$1"
 HERE=$PWD
-NROC=12
-NSUB=2000
+NROC=14
+NSUB=1000
 
 if [ ! -d ${ANADIR} ]
 then
@@ -14,19 +14,19 @@ if [[ $1 -gt 88 ]]; then
     ts -S 50
     for i in $(seq 0 20);
     do
-	ts sleep 0.01
-    done
-    ts -N 50
-    ts -wf sleep 0.01
-    #Reconstruction
-    for i in $(seq 0 $NSUB);
-    do
-	ts bash -c "$exe_ter -P $1 $i"
+    ts sleep 0.01
     done
     ts -N 50 sleep 0.01
     ts -df sleep 0.01
-    echo "Terminated reconstruction"
-    source run_4.sh
+    #Merge
+    for i in $(seq 0 $NSUB);
+    do
+        ts bash -c "$exe_ter -V $1 $i"
+    done
+    ts -N 50 sleep 0.01
+    ts -df sleep 0.01
+    echo "Terminated merging decoded"
+    source run_3.sh
 
 fi
 cd $HERE

@@ -19,7 +19,7 @@ int trigg_channel = 62;
 //if(run>=118) trigg_channel=62;
 
 //In file variables
-int dchannel, dgemroc, dtiger, dcount, dtimestamp, dstrip_x, dstrip_v, dl1ts_min_tcoarse, dlasttigerframenum, dchip, dFEB_label, drunNo, dlayer, dtrigg_flag, dtcoarse_min_ts;
+int dchannel, dgemroc, dFEB, dcount, dtimestamp, dstrip_x, dstrip_v, dl1ts_min_tcoarse, dlasttigerframenum, dchip, dFEB_label, drunNo, dlayer, dtrigg_flag, dtcoarse_min_ts;
 float dcharge_SH, dcharge_TOT, dpos_phi, dtcoarse, decoarse, dtfine, define, dttrigg, dtrigg_tcoarse, dconstant, dslope, dqmax, dtime, dradius, ddelta_coarse; 
 
 //TP test
@@ -92,7 +92,7 @@ void event(int run, int subrun){
   auto file = new TFile(iname.c_str());
   auto tree = (TTree*)file->Get("tree");
   
-  int dchannel, dgemroc, dtiger, dcount, dtimestamp, dstrip_x, dstrip_v, dl1ts_min_tcoarse, dlasttigerframenum, dchip, dFEB_label, drunNo, dlayer, dtrigg_flag, dtac;
+  int dchannel, dgemroc, dFEB, dcount, dtimestamp, dstrip_x, dstrip_v, dl1ts_min_tcoarse, dlasttigerframenum, dchip, dFEB_label, drunNo, dlayer, dtrigg_flag, dtac;
   float dcharge_SH, dhcarge_TOT, dpos_phi, dtcoarse, decoarse, dtfine, define, dttrigg, dtrigg_tcoarse, dconstant, dslope, dqmax, dtime, dradius, ddelta_coarse; 
   bool dsaturated;
 
@@ -100,7 +100,7 @@ void event(int run, int subrun){
   tree->SetBranchAddress("layer",&dlayer);
   tree->SetBranchAddress("channel",&dchannel);
   tree->SetBranchAddress("gemroc",&dgemroc);
-  tree->SetBranchAddress("tiger",&dtiger);
+  tree->SetBranchAddress("FEB",&dFEB);
   tree->SetBranchAddress("charge_SH",&dcharge_SH);
   tree->SetBranchAddress("charge_TOT",&dcharge_TOT);
   tree->SetBranchAddress("count",&dcount);
@@ -251,8 +251,8 @@ void event(int run, int subrun){
   int evtNo, nhits, ngemrocs, ntimestamp, runNo, ntcoarse_L1_TP, ntcoarse_L2_TP;
   float trigg_tcoarse;
   
-  std::vector<int> tcount, tchannel, tgemroc, ttiger, tFEB_SW, ttimestamp, tstrip_x, tstrip_v, tl1ts_min_tcoarse, tchip, tFEB_label, tquality, tlayer, ttac, ttcoarse_min_ts;
-  std::vector<float> tcharge_SH, tcharge_TOT, tpos_phi, ttcoarse, tecoarse, ttfine, tefine, t_min_ttrigg, tconstant, tslope, tqmax, ttime, tradius, ttrigg, delta_coarse, ttime_ns;
+  std::vector<int> tcount, tchannel, tgemroc, tFEB, ttimestamp, tstrip_x, tstrip_v, tl1ts_min_tcoarse, tchip, tFEB_label, tquality, tlayer, ttac, ttcoarse_min_ts;
+  std::vector<float> tcharge_SH, tcharge_TOT, tpos_phi, ttcoarse, tecoarse, ttfine, tefine, t_min_ttrigg, tconstant, tslope, tqmax, ttime, tradius, ttrigg, delta_coarse;
   std::vector<bool> tsaturated;
   
   if(DEBUG) std::cout << "DEBUG::Just created all the vector variable" << std::endl;
@@ -270,8 +270,7 @@ void event(int run, int subrun){
   otree->Branch("layer"             , "vector<int>"  , &tlayer           ); // Layer No. for each hit
   otree->Branch("channel"           , "vector<int>"  , &tchannel         ); // channel ID for each hit
   otree->Branch("gemroc"            , "vector<int>"  , &tgemroc          ); // GEMROC ID for each hit
-  otree->Branch("tiger"             , "vector<int>"  , &ttiger           ); // TIGER ID for each hit
-  otree->Branch("FEB_SW"            , "vector<int>"  , &tFEB_SW          ); // TIGER ID for each hit (WRONG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
+  otree->Branch("FEB_SW"            , "vector<int>"  , &tFEB             ); // FEB ID for each hit
   otree->Branch("local_l1_timestamp", "vector<int>"  , &ttimestamp       ); // GEMROC LOCAL_L1_TIMESTAMP for each hit
   otree->Branch("strip_v"           , "vector<int>"  , &tstrip_v         ); // strip V number of each hit
   otree->Branch("strip_x"           , "vector<int>"  , &tstrip_x         ); // strip X number of each hit
@@ -279,7 +278,6 @@ void event(int run, int subrun){
   otree->Branch("FEB_label"         , "vector<int>"  , &tFEB_label       ); // FEB label number for each hit
   otree->Branch("l1ts_min_tcoarse"  , "vector<int>"  , &tl1ts_min_tcoarse); // GEMROC LOCAL_L1_TIMESTAMP - tcoarse for each hit
   otree->Branch("tcoarse_min_ts"    , "vector<int>"  , &ttcoarse_min_ts  ); // tcoarse - TIMESTAMP 
-  otree->Branch("time_ns"           , "vector<float>", &ttime_ns         ); // (tcoarse - TIMESTAMP) * 6.25 - tfine 
   otree->Branch("quality"           , "vector<int>"  , &tquality         ); // tags of good event for each hit
   otree->Branch("charge_SH"         , "vector<float>", &tcharge_SH       ); // charge in S&H mode, with QDC calibration, for each hit
   otree->Branch("charge_TOT"        , "vector<float>", &tcharge_TOT      ); 
@@ -404,8 +402,7 @@ void event(int run, int subrun){
       tlayer           .push_back(dlayer           );
       tchannel         .push_back(dchannel         );
       tgemroc          .push_back(dgemroc          );
-      ttiger           .push_back(dtiger           );
-      tFEB_SW          .push_back(dtiger           );      // wrong!!!!!!!!!!!!!!!
+      tFEB             .push_back(dFEB             ); 
       ttimestamp       .push_back(dtimestamp       );
       tcharge_SH       .push_back(dcharge_SH       );
       tcharge_TOT      .push_back(dcharge_TOT      );
@@ -421,7 +418,6 @@ void event(int run, int subrun){
       tefine           .push_back(define           );
       tl1ts_min_tcoarse.push_back(dl1ts_min_tcoarse);
       ttcoarse_min_ts  .push_back(dtcoarse_min_ts  );
-      ttime_ns         .push_back(dtcoarse_min_ts*6.25-dtfine);
       tconstant        .push_back(dconstant        );
       tslope           .push_back(dslope           );
       tqmax            .push_back(dqmax            );
@@ -531,8 +527,7 @@ void event(int run, int subrun){
       tlayer           .clear();
       tchannel         .clear();
       tgemroc          .clear();
-      ttiger           .clear();
-      tFEB_SW          .clear();
+      tFEB             .clear();
       ttimestamp       .clear();
       tstrip_v         .clear();
       tstrip_x         .clear();
@@ -540,7 +535,6 @@ void event(int run, int subrun){
       tFEB_label       .clear();
       tl1ts_min_tcoarse.clear();
       ttcoarse_min_ts  .clear();
-      ttime_ns         .clear();
       tquality         .clear();
       tcharge_SH       .clear();
       tcharge_TOT      .clear();

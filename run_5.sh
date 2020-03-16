@@ -10,14 +10,14 @@ if [ ! -d ${ANADIR} ]
 then
     mkdir ${ANADIR}
 fi
-echo "Start merge all subruns"
+
+echo "Start clean bad subruns"
 ts -S $MAXJOB
 #Clean
-ts -df bash -c "$exe_ter -C $1"
-#Wait
+ts -df bash -c "$exe_ter -c $1"
 ts -N $MAXJOB sleep 0.01
 ts -df sleep 0.01
-echo "Terminate merge all subruns"
+echo "Terminate clean bad subruns"
 rm -f /tmp/ihep_data/ts-out.*
-source run_5.sh
+source run_6.sh
 

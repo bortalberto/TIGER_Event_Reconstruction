@@ -10,26 +10,25 @@ from ROOT import gROOT, AddressOf
 
 
 class reader:
-	def __init__(self, GEMROC_ID, MODE, RUN, SUBRUN):
+	def __init__(self, GEMROC_ID, MODE, RUN):
 		self.MODE = int(MODE)
 		self.GEMROC_ID = int(GEMROC_ID)
-		self.RUN = int(RUN)
-                self.SUBRUN = int(SUBRUN)
+		self.RUN=int(RUN)
 		self.thr_scan_matrix = np.zeros((8, 64))  # Tiger,Channel
 		self.thr_scan_frames = np.ones(8)
 		self.thr_scan_rate = np.zeros((8, 64))
 
 	def __del__(self):
-		print ("Done\n\n")
+		print ("Done")
 
 	def write_root(self, path):
 		gROOT.ProcessLine('struct TreeStruct {\
 				int runNo;\
-				int layer;\
-				int gemroc;\
-				int tiger;\
-				int channel;\
-				int tac;\
+				int layer_id;\
+				int gemroc_id;\
+				int tiger_id;\
+				int channel_id;\
+				int tac_id;\
 				float tcoarse;\
 				float tcoarse_10b;\
 				float ecoarse;\
@@ -48,17 +47,14 @@ class reader:
 				int count_missing_trailer;\
 				int subRunNo;\
                                 int l1_framenum;\
-                                int trailer_tiger;\
+                                int trailer_tiger_id;\
 				};')
 		from ROOT import TreeStruct
 
 		rname = path.replace(".dat",".root")
 
-		#subRunNo = int(path.split("_")[7])
-                subRunNo = self.SUBRUN
-		
-                #run = int(path.split("_")[6].split("/")[0])
-                #print run
+		subRunNo = int(path.split("_")[7])
+		#print subRunNo
 
 		rootFile = ROOT.TFile(rname, 'recreate')
 		tree = ROOT.TTree('tree', '')
@@ -79,8 +75,8 @@ class reader:
 		l1count = -1
 
 		l1count_new=[]
-		lschannel=[]
-		lstac=[]
+		lschannel_id=[]
+		lstac_id=[]
 		lstcoarse=[]
 		lstcoarse_10b=[]
 		lsecoarse=[]
@@ -93,7 +89,7 @@ class reader:
 		lscount_mismatch=[]
 		lsdelta_coarse=[]
 		l1timestamp = -1
-		gemroc = -1
+		gemrocid = -1
                 l1framenum = -1 
                 trailer_tiger = -1
 
@@ -152,10 +148,10 @@ class reader:
 
 				if (((int_x & 0xFF00000000000000) >> 59) == 0x00 and self.MODE == 0):
 					mystruct.runNo = self.RUN
-					mystruct.gemroc = self.GEMROC_ID
-					mystruct.tiger = (int_x>>56)&0x7
-					mystruct.channel = (int_x>>48)&0x3F
-					mystruct.tac = (int_x>>46)&0x3
+					mystruct.gemroc_id = self.GEMROC_ID
+					mystruct.tiger_id = (int_x>>56)&0x7
+					mystruct.channel_id = (int_x>>48)&0x3F
+					mystruct.tac_id = (int_x>>46)&0x3
 					mystruct.tcoarse = (int_x >> 30)&0xFFFF
 					mystruct.ecoarse = (int_x >> 20)&0x3FF
 					mystruct.tfine = (int_x >> 10)&0x3FF
@@ -171,11 +167,11 @@ class reader:
 					mystruct.charge_SH = int_x & 0x3FF
 
 					if(self.GEMROC_ID<4):
-						mystruct.layer = 1
+						mystruct.layer_id = 1
 					elif(self.GEMROC_ID>3):
-						mystruct.layer = 2
+						mystruct.layer_id = 2
 					if(self.GEMROC_ID>11):
-						mystruct.layer = 0
+						mystruct.layer_id = 0
 						
 					tree.Fill()
 
@@ -216,10 +212,10 @@ class reader:
 
 						firstData = True                 ## Header flags that next line will be first data word of the packet
 
-						if len(lschannel)>0:
+						if len(lschannel_id)>0:
 						
-							lschannel=[]
-							lstac=[]
+							lschannel_id=[]
+							lstac_id=[]
 							lstcoarse=[]
 							lsecoarse=[]
 							lstfine=[]
@@ -239,8 +235,8 @@ class reader:
 						LOCAL_L1_TS_minus_TIGER_COARSE_TS = LOCAL_L1_TIMESTAMP - ((int_x >> 32) & 0xFFFF)
 						#print "enter DATA"
 						lstigerid.append((int_x>>59)&0x7)
-						lschannel.append((int_x>>50)&0x3F)
-						lstac.append((int_x>>48)&0x3)
+						lschannel_id.append((int_x>>50)&0x3F)
+						lstac_id.append((int_x>>48)&0x3)
 						lsecoarse.append((int_x >> 20)&0x3FF)
 						lstfine.append((int_x >> 10)&0x3FF)
 						lsefine.append(int_x & 0x3FF)
@@ -395,7 +391,7 @@ class reader:
 						packet_tailer = 1
                                                 l1framenum = (int_x >> 37)&0xFFFFFF
                                                 trailer_tiger = (int_x >> 27)&0x7
-						gemroc = (int_x >> 32)&0x1F
+						gemrocid = (int_x >> 32)&0x1F
 					   
 
 					if(((int_x & 0xF000000000000000)>>60) == 0x4):             ## UDP WORD --> used to flag end of packet
@@ -409,16 +405,16 @@ class reader:
 
 
 					if(packet_header == 1 and  packet_udp == 1):               ## Fill ROOT file
-						for x in range(len(lstac)):
-							mystruct.channel = lschannel.pop()
-							mystruct.tac = lstac.pop()
+						for x in range(len(lstac_id)):
+							mystruct.channel_id = lschannel_id.pop()
+							mystruct.tac_id = lstac_id.pop()
 							mystruct.tcoarse = lstcoarse.pop()
 							mystruct.ecoarse = lsecoarse.pop()
 							mystruct.tfine = lstfine.pop()
 							mystruct.efine = lsefine.pop()
 							mystruct.tcoarse_10b = lstcoarse_10b.pop()
 							mystruct.charge_SH = lscharge_SH.pop()
-							mystruct.tiger = lstigerid.pop()
+							mystruct.tiger_id = lstigerid.pop()
 							mystruct.l1ts_min_tcoarse = lsl1ts_min_tcoarse.pop()
 							mystruct.lasttigerframenum = lslasttigerframenum.pop()
 							mystruct.count_mismatch = lscount_mismatch.pop()
@@ -430,11 +426,11 @@ class reader:
 							mystruct.count_ori = l1count
 							mystruct.count = mystruct.count_new
 							mystruct.timestamp = l1timestamp
-							mystruct.gemroc = self.GEMROC_ID    # previously was gemroc value from trailer word
+							mystruct.gemroc_id = self.GEMROC_ID    # previously was gemrocid value from trailer word
 							mystruct.runNo = self.RUN
 							mystruct.subRunNo = subRunNo
 							mystruct.l1_framenum = l1framenum
-							mystruct.trailer_tiger = trailer_tiger
+							mystruct.trailer_tiger_id = trailer_tiger
 
 							"""
 							if(gemrocid<4):
@@ -446,11 +442,11 @@ class reader:
 							"""
 
 							if(self.GEMROC_ID<4):
-								mystruct.layer = 1
+								mystruct.layer_id = 1
 							elif(self.GEMROC_ID>3):
-								mystruct.layer = 2
+								mystruct.layer_id = 2
 							if(self.GEMROC_ID>11):
-								mystruct.layer = 0
+								mystruct.layer_id = 0
 							
 							hitcounter = hitcounter + 1
 							if(hitcounter>max_hitcount): 
@@ -484,31 +480,23 @@ class reader:
 
 
 import sys
-
-print sys.argv
-
 if(len(sys.argv) == 4):
-	filename = sys.argv[1]
-	gemroc_id = sys.argv[2]
-	mode = sys.argv[3]
-        run = 1
+	filename=sys.argv[1]
+	gemroc_id=sys.argv[2]
+	mode=sys.argv[3]
+	run=1
 elif(len(sys.argv) == 5):
-	filename = sys.argv[1]
-        #run = int(filename.split("RUN_")[1].split("/")[0])
-        subrun_number = int(os.path.basename(filename).split("_")[1])
-	gemroc_id = sys.argv[2]
-	mode = sys.argv[3]
-	run=sys.argv[4]                # was wrong because Decode was given the wrong input from TER.sh
-        print run
-        #print subrun_number
-
+	filename=sys.argv[1]
+	gemroc_id=sys.argv[2]
+	mode=sys.argv[3]
+	run=sys.argv[4]
 else:
-	filename = input("Insert file name:")
-	gemroc_id = input("Insert Gemroc id:")
-	mode = input("MODE:(trigger_less:0 trigger_matched:1)")
-	run = 1
+	filename=input("Insert file name:")
+	gemroc_id=input("Insert Gemroc id:")
+	mode=input("MODE:(trigger_less:0 trigger_matched:1)")
+	run=1
 
-GEM5 = reader(gemroc_id, mode, run, subrun_number)
-print ("Decoding: " + filename)
+GEM5=reader(gemroc_id,mode,run)
 GEM5.write_root(filename)
 
+print ("Decoding: " + filename)

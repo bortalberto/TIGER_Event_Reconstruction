@@ -1,0 +1,74 @@
+#include "clean.h"
+#include "TSystem.h"
+
+const bool TP_on = 1;
+
+void clean(int run){
+  std::string iname=ANADIR;
+  iname=iname+std::to_string(run)+"/TP_event.root";
+
+  std::ifstream inStream(iname, std::ios::binary);
+  if (!inStream) {
+    std::cerr << "File " << iname << " not found" << std::endl;
+    return;
+  }
+  
+  TCanvas *c1 = new TCanvas("c1","c1",800,600);
+  auto file = new TFile(iname.c_str());
+  TTree *tree = (TTree*)file->Get("t1");
+  const int max_subrun = 2000;
+  const int max_event = 2000;
+  TH1I *h_subrun = new TH1I("h_subrun","h_subrun",max_subrun,0,max_subrun);
+  TH1I *h_event = new TH1I("h_event","h_event",max_event,0,max_event);
+  TF1 *g_event = new TF1("g_event","gaus",0,max_event);
+  TString bash_cut="rm -f " + ANADIR + Form("%i/",run);
+  //Remove subRUN with at least 1 FEB w/o TP
+  if(TP_on){
+    tree->Draw("subRUN>>h_subrun","FEB<44 && TP_eff<0.1","");
+    for(int i=0;i<max_subrun;i++){
+      if(h_subrun->GetBinContent(i+1)) {
+	TString bash_cut_i=bash_cut + Form("Sub_RUN_event_%i.root",i);
+	cout<<bash_cut_i<<endl;
+	//gSystem->Exec(bash_cut_i);
+	TString bash_cut_ii=bash_cut + Form("Sub_RUN_TP_event_%i.root",i);
+	//gSystem->Exec(bash_cut_ii);
+      }
+    }
+  }
+  //Remove subRUN with low number of trigger
+  if(0){
+    tree->Draw("event>>h_event","FEB<44","");
+    h_event->Fit(g_event,"WQ");
+    TString cut = Form("FEB<44 && event<%f",g_event->GetParameter(1)-3*g_event->GetParameter(2));
+    tree->Draw("subRUN>>h_subrun",cut,"");
+    for(int i=0;i<max_subrun;i++){
+      if(h_subrun->GetBinContent(i+1)) {
+	TString bash_cut_i=bash_cut + Form("Sub_RUN_event_%i.root",i);
+	gSystem->Exec(bash_cut_i);
+	TString bash_cut_ii=bash_cut + Form("Sub_RUN_TP_event_%i.root",i);
+	gSystem->Exec(bash_cut_ii);      
+      }
+    }
+  }
+  //Remove subRUN with low number of trigger in at least on FEB 
+  if(0){
+    for(int ifeb=0;ifeb<44;ifeb++){
+      TString cut_feb = Form("FEB==%i",ifeb);
+      tree->Draw("event>>h_event",cut_feb,"");
+      h_event->Fit(g_event,"WQ");
+      TString icut = Form("FEB==%i && event<%f",ifeb,g_event->GetParameter(1)-3*g_event->GetParameter(2));
+      cout<<tree->GetEntries(icut)<<endl;
+      tree->Draw("subRUN>>h_subrun",icut,"");
+      for(int i=0;i<max_subrun;i++){
+	if(h_subrun->GetBinContent(i+1)) {
+	  TString bash_cut_i=bash_cut + Form("Sub_RUN_event_%i.root",i);
+	  //cout<<bash_cut<<endl;
+	  //gSystem->Exec(bash_cut_i);
+	  TString bash_cut_ii=bash_cut + Form("Sub_RUN_TP_event_%i.root",i);
+	  //gSystem->Exec(bash_cut_ii);
+	}
+      }
+    }
+  }
+  return;
+}

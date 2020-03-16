@@ -16,14 +16,19 @@
 #include "TSystem.h"
 #include <thread>
 #include <chrono>
+#include "TStyle.h"
+#include "TMinuit.h"
+#include "TString.h"
 
 const string DataDir="/home/ihep_data/data/raw_root/";
 
 using namespace std;
 void ext(int);
-void ext(int,int,int,int);
-void ext_i(int,int,int);
-bool init(int);
+void ext(vector<int>);
+void ext(vector<int>,int,int,int);
+void ext_i(vector<int>,int,int);
+bool init(int,int);
+bool init(vector<int>);
 TString Get_Cut(int,int);
 TString Get_Cut(int,int,int);
 TString Get_Cut(int,int,int,int);

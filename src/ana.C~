@@ -249,13 +249,14 @@ void ana(int run, int subrun){
   auto datatree = (TTree*)datafile->Get("tree");
   
   int dchannel, dgemroc, dFEB, dcount, dtimestamp, dl1ts_min_tcoarse, dlasttigerframenum, dtac, drunNo, dlayer;
-  float dcharge_SH, ddelta_coarse, dtcoarse, decoarse, dtfine, define;
+  float dcharge_SH, ddelta_coarse, dtcoarse, decoarse, dtfine, define, dsubRunNo;
   
-  datatree->SetBranchAddress("layer_id", &dlayer);
+  datatree->SetBranchAddress("layer", &dlayer);
   datatree->SetBranchAddress("runNo", &drunNo);
-  datatree->SetBranchAddress("channel_id", &dchannel);
-  datatree->SetBranchAddress("gemroc_id", &dgemroc);
-  datatree->SetBranchAddress("tiger_id", &dFEB);
+  datatree->SetBranchAddress("subRunNo", &dsubRunNo);
+  datatree->SetBranchAddress("channel", &dchannel);
+  datatree->SetBranchAddress("gemroc", &dgemroc);
+  datatree->SetBranchAddress("tiger", &dFEB);
   datatree->SetBranchAddress("charge_SH", &dcharge_SH);
   datatree->SetBranchAddress("delta_coarse", &ddelta_coarse);
   datatree->SetBranchAddress("count", &dcount);
@@ -266,17 +267,18 @@ void ana(int run, int subrun){
   datatree->SetBranchAddress("efine", &define);
   datatree->SetBranchAddress("l1ts_min_tcoarse", &dl1ts_min_tcoarse);
   datatree->SetBranchAddress("lasttigerframenum", &dlasttigerframenum);
-  datatree->SetBranchAddress("tac_id", &dtac);
+  datatree->SetBranchAddress("tac", &dtac);
   
   
   auto ofile = new TFile(oname.c_str(),"RECREATE");
   auto otree = new TTree("tree","tree");
   
-  int channel, gemroc, FEB, strip_x, strip_v, count, timestamp, l1ts_min_tcoarse, lasttigerframenum, chip, FEB_label, tac, runNo, layer, max_count, trigg_flag, tcoarse_min_ts;
+  int channel, gemroc, FEB, strip_x, strip_v, count, timestamp, l1ts_min_tcoarse, lasttigerframenum, chip, FEB_label, tac, runNo, layer, max_count, trigg_flag, tcoarse_min_ts, subRunNo;
   float charge_SH, charge_SH_uncal, charge_TOT, charge_TOT_uncal, constant, slope, qmax, delta_coarse, pos_phi, tcoarse, ecoarse, tfine, efine, ttrigg = -99999, trigg_tcoarse = -99999, tfine_uncal, efine_uncal, time, radius; 
   bool saturated = false;
   
   otree->Branch("runNo",&runNo,"runNo/I");
+  otree->Branch("subRunNo",&subRunNo,"subRunNo/I");
   otree->Branch("layer",&layer,"layer/I");
   otree->Branch("channel",&channel,"channel/I");
   otree->Branch("gemroc",&gemroc,"gemroc/I");
@@ -324,6 +326,7 @@ void ana(int run, int subrun){
     datatree->GetEntry(i);
 
     runNo = drunNo;
+    subRunNo = dsubRunNo;
     layer = dlayer;
     if(layer==1){
       radius = 90.223;
@@ -368,7 +371,9 @@ void ana(int run, int subrun){
 
     //the units for tfine and efine with correction are in ns
     tfine = (tfine_uncal - TDCcons_Tmin[dgemroc][dFEB][dchannel][tac]) * TDCcons_Tbin[dgemroc][dFEB][dchannel][tac];
+    if(tfine>10 || tfine<-5) tfine=0;
     efine = (efine_uncal - TDCcons_Emin[dgemroc][dFEB][dchannel][tac]) * TDCcons_Ebin[dgemroc][dFEB][dchannel][tac];
+    if(efine>10 || efine<-5) efine=0;
 
     //TOT Calibration
     TF1 *f_tot = new TF1("f","[4]*exp([0]*x+[1])+[2]+[3]*x",0,500);

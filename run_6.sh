@@ -6,18 +6,13 @@ MAXJOB=$(tail $TER/setting/MAXJOB)
 TS_MAXCONN=100
 export TS_MAXCONN=100
 
+
 if [ ! -d ${ANADIR} ]
 then
     mkdir ${ANADIR}
 fi
-echo "Start merge all subruns"
+echo "Start merge good subruns"
 ts -S $MAXJOB
-#Clean
+#Merge
 ts -df bash -c "$exe_ter -C $1"
-#Wait
-ts -N $MAXJOB sleep 0.01
-ts -df sleep 0.01
-echo "Terminate merge all subruns"
-rm -f /tmp/ihep_data/ts-out.*
-source run_5.sh
-
+echo "Terminate merge good subruns"

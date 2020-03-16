@@ -248,15 +248,14 @@ void ana(int run, int subrun){
   auto datafile = new TFile(iname.c_str());
   auto datatree = (TTree*)datafile->Get("tree");
   
-  int dchannel, dgemroc, dtiger, dcount, dtimestamp, dl1ts_min_tcoarse, dlasttigerframenum, dtac, drunNo, dlayer, dsubRunNo;
+  int dchannel, dgemroc, dFEB, dcount, dtimestamp, dl1ts_min_tcoarse, dlasttigerframenum, dtac, drunNo, dlayer;
   float dcharge_SH, ddelta_coarse, dtcoarse, decoarse, dtfine, define;
   
-  datatree->SetBranchAddress("layer", &dlayer);
+  datatree->SetBranchAddress("layer_id", &dlayer);
   datatree->SetBranchAddress("runNo", &drunNo);
-  datatree->SetBranchAddress("subRunNo", &dsubRunNo);
-  datatree->SetBranchAddress("channel", &dchannel);
-  datatree->SetBranchAddress("gemroc", &dgemroc);
-  datatree->SetBranchAddress("tiger", &dtiger);
+  datatree->SetBranchAddress("channel_id", &dchannel);
+  datatree->SetBranchAddress("gemroc_id", &dgemroc);
+  datatree->SetBranchAddress("tiger_id", &dFEB);
   datatree->SetBranchAddress("charge_SH", &dcharge_SH);
   datatree->SetBranchAddress("delta_coarse", &ddelta_coarse);
   datatree->SetBranchAddress("count", &dcount);
@@ -267,22 +266,21 @@ void ana(int run, int subrun){
   datatree->SetBranchAddress("efine", &define);
   datatree->SetBranchAddress("l1ts_min_tcoarse", &dl1ts_min_tcoarse);
   datatree->SetBranchAddress("lasttigerframenum", &dlasttigerframenum);
-  datatree->SetBranchAddress("tac", &dtac);
+  datatree->SetBranchAddress("tac_id", &dtac);
   
   
   auto ofile = new TFile(oname.c_str(),"RECREATE");
   auto otree = new TTree("tree","tree");
   
-  int channel, gemroc, tiger, strip_x, strip_v, count, timestamp, l1ts_min_tcoarse, lasttigerframenum, chip, FEB_label, tac, runNo, layer, max_count, trigg_flag, tcoarse_min_ts, subRunNo;
+  int channel, gemroc, FEB, strip_x, strip_v, count, timestamp, l1ts_min_tcoarse, lasttigerframenum, chip, FEB_label, tac, runNo, layer, max_count, trigg_flag, tcoarse_min_ts;
   float charge_SH, charge_SH_uncal, charge_TOT, charge_TOT_uncal, constant, slope, qmax, delta_coarse, pos_phi, tcoarse, ecoarse, tfine, efine, ttrigg = -99999, trigg_tcoarse = -99999, tfine_uncal, efine_uncal, time, radius; 
   bool saturated = false;
   
   otree->Branch("runNo",&runNo,"runNo/I");
-  otree->Branch("subRunNo",&subRunNo,"subRunNo/I");
   otree->Branch("layer",&layer,"layer/I");
   otree->Branch("channel",&channel,"channel/I");
   otree->Branch("gemroc",&gemroc,"gemroc/I");
-  otree->Branch("tiger",&tiger,"tiger/I");
+  otree->Branch("FEB",&FEB,"FEB/I");
   otree->Branch("max_count",&max_count,"max_count/I");
   otree->Branch("strip_x",&strip_x,"strip_x/I");
   otree->Branch("strip_v",&strip_v,"strip_v/I");
@@ -326,7 +324,6 @@ void ana(int run, int subrun){
     datatree->GetEntry(i);
 
     runNo = drunNo;
-    subRunNo = dsubRunNo;
     layer = dlayer;
     if(layer==1){
       radius = 90.223;
@@ -340,7 +337,7 @@ void ana(int run, int subrun){
     
     channel = dchannel;
     gemroc = dgemroc;
-    tiger = dtiger;
+    FEB = dFEB;
     count =  dcount;
     timestamp =  dtimestamp;
     charge_SH_uncal = dcharge_SH;
@@ -353,14 +350,14 @@ void ana(int run, int subrun){
     l1ts_min_tcoarse = dl1ts_min_tcoarse;
     tcoarse_min_ts = -dl1ts_min_tcoarse;
     lasttigerframenum = dlasttigerframenum;
-    constant = cons[dgemroc][dtiger][dchannel];
-    slope = mslope[dgemroc][dtiger][dchannel];
-    qmax = mqmax[dgemroc][dtiger][dchannel];
-    strip_x = mx[dgemroc][dtiger][dchannel];
-    strip_v = mv[dgemroc][dtiger][dchannel];
-    pos_phi = mphi[dgemroc][dtiger][dchannel];
-    chip = mchip_id[dgemroc][dtiger][dchannel];
-    FEB_label = mFEB_label_id[dgemroc][dtiger][dchannel];
+    constant = cons[dgemroc][dFEB][dchannel];
+    slope = mslope[dgemroc][dFEB][dchannel];
+    qmax = mqmax[dgemroc][dFEB][dchannel];
+    strip_x = mx[dgemroc][dFEB][dchannel];
+    strip_v = mv[dgemroc][dFEB][dchannel];
+    pos_phi = mphi[dgemroc][dFEB][dchannel];
+    chip = mchip_id[dgemroc][dFEB][dchannel];
+    FEB_label = mFEB_label_id[dgemroc][dFEB][dchannel];
     //SH Calibration
     if(charge_SH_uncal == 1008) saturated = true;
     else saturated = false;
@@ -370,14 +367,14 @@ void ana(int run, int subrun){
     //if(tfine_uncal<150||tfine_uncal>600) continue;
 
     //the units for tfine and efine with correction are in ns
-    tfine = (tfine_uncal - TDCcons_Tmin[dgemroc][dtiger][dchannel][tac]) * TDCcons_Tbin[dgemroc][dtiger][dchannel][tac];
+    tfine = (tfine_uncal - TDCcons_Tmin[dgemroc][dFEB][dchannel][tac]) * TDCcons_Tbin[dgemroc][dFEB][dchannel][tac];
     if(tfine>10 || tfine<-5) tfine=0;
-    efine = (efine_uncal - TDCcons_Emin[dgemroc][dtiger][dchannel][tac]) * TDCcons_Ebin[dgemroc][dtiger][dchannel][tac];
+    efine = (efine_uncal - TDCcons_Emin[dgemroc][dFEB][dchannel][tac]) * TDCcons_Ebin[dgemroc][dFEB][dchannel][tac];
     if(efine>10 || efine<-5) efine=0;
 
     //TOT Calibration
     TF1 *f_tot = new TF1("f","[4]*exp([0]*x+[1])+[2]+[3]*x",0,500);
-    int delta = delta_vth1_baseline[dgemroc][dtiger][dchannel];
+    int delta = delta_vth1_baseline[dgemroc][dFEB][dchannel];
     f_tot->SetParameters(tot_parameters[delta][0],tot_parameters[delta][1],tot_parameters[delta][2],tot_parameters[delta][3],tot_parameters[delta][4]);
     charge_TOT_uncal = delta_coarse * 6.25 - efine + tfine;
     charge_TOT = f_tot->GetX(charge_TOT_uncal);

@@ -1,7 +1,9 @@
-ANADIR="/dati/Data_CGEM_IHEP_Integration_2019/raw_root/$1"
 HERE=$PWD
-NROC=12
-NSUB=2000
+NROC=$(tail $TER/setting/NROC)
+NSUB=$(tail $TER/setting/NSUB)
+MAXJOB=$(tail $TER/setting/MAXJOB)
+TS_MAXCONN=100
+export TS_MAXCONN=100
 
 if [ ! -d ${ANADIR} ]
 then
@@ -10,22 +12,21 @@ fi
 
 
 if [[ $1 -gt 88 ]]; then
+    echo "Start reconstruction"
     DATADIR="/dati/Data_CGEM_IHEP_Integration_2019/raw_dat/RUN_$1"
-    ts -S 50
-    for i in $(seq 0 20);
-    do
-	ts sleep 0.01
-    done
-    ts -N 50
-    ts -wf sleep 0.01
+    ANADIR="/dati/Data_CGEM_IHEP_Integration_2019/raw_root/$1"
+    ts -S $MAXJOB
+    ts -N $MAXJOB sleep 0.01
+    ts -df sleep 0.01
     #Reconstruction
     for i in $(seq 0 $NSUB);
     do
 	ts bash -c "$exe_ter -P $1 $i"
     done
-    ts -N 50 sleep 0.01
+    ts -N $MAXJOB sleep 0.01
     ts -df sleep 0.01
-    echo "Terminated reconstruction"
+    echo "Terminate reconstruction"
+    rm -f /tmp/ihep_data/ts-out.*
     source run_4.sh
 
 fi

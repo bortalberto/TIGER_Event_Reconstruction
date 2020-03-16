@@ -4,6 +4,8 @@
 #
 QUI=$PWD
 NROC=14
+TS_MAXCONN=100
+export TS_MAXCONN=100
 
 if [ $# -eq 0 ]
 then
@@ -45,10 +47,11 @@ OPT_ROOT_EVT="false"
 OPT_ROOT_POS="false"
 OPT_ROOT="false"
 OPT_COPY="false"
+OPT_CLEAN="false"
 OPT_DAQ="false"
 OPT_ROOT_DAQ="false"
 OPT_EXT="false"
-while getopts "DAEPGMPQFmdawphegfCVXx" OPTION; do
+while getopts "DAEPGMPQFmdawphegfCcVXx" OPTION; do
     case $OPTION in
 
 	w)
@@ -58,30 +61,28 @@ while getopts "DAEPGMPQFmdawphegfCVXx" OPTION; do
 	h)
 	    echo "Usage:"
 	    echo ""
-	    echo "   -w                  to execute echo \"hello world\""
-	    echo "   -h                  help (this output)"
-	    echo "   -F RUN SUBRUN ROC   Decoding one ROC  -> run Decode.py"
-	    echo "   -D RUN SUBRUN       Decoding all ROCs -> run Decode.py"
-	    echo "   -V RUN SUBRUN       Merge thr decoded files"
-	    echo "   -A RUN SUBRUN       Calibration       -> run ana.C"
-	    echo "   -E RUN SUBRUN       Create event      -> run event.C"
-	    #echo "   -Q RUN SUBRUN       Associate the time of each TIGER to its TP -> run post_event.C"
-	    #echo "   -G RUN SUBRUN       Run decode ana event post_event"
-	    echo "   -P RUN SUBRUN       RUN ana event"
-	    echo "   -Q RUN SUBRUN       data quality analysis and plot"
-            echo "   -X RUN              run the extraction of the information"
-            echo "   -X RUN FEB CHANNEL  run the extraction of the i-th channel"
-	    echo "   -M                  make clean all"
-	    echo "   -m                  make"
-	    echo "   -f RUN SUBRUN ROC   open the decoded      root file for the run and subrun and roc given"
-	    echo "   -d RUN SUBRUN       open the decoded      root file for the run and subrun given"
-	    echo "   -a RUN SUBRUN       open the ana          root file for the run and subrun given"
-	    echo "   -e RUN SUBRUN       open the event        root file for the run and subrun given"
-	    echo "   -p RUN SUBRUN       open the post_event   root file for the run and subrun given"
-	    echo "   -g RUN              open the merged event root file for the run"
-            echo "   -x RUN              open the channel ana  root file for the run"
-	    echo "   -C RUN              copy the run into thr GRAAL folder"
-
+	    echo "   -w                      to execute echo \"hello world\""
+	    echo "   -h                      help (this output)"
+	    echo "   -F RUN SUBRUN ROC       Decoding one ROC  -> run Decode.py"
+	    echo "   -D RUN SUBRUN           Decoding all ROCs -> run Decode.py"
+	    echo "   -V RUN SUBRUN           Merge thr decoded files"
+	    echo "   -A RUN SUBRUN           Calibration       -> run ana.C"
+	    echo "   -E RUN SUBRUN           Create event      -> run event.C"
+	    echo "   -P RUN SUBRUN           RUN ana event"
+	    echo "   -Q RUN SUBRUN           data quality analysis and plot"
+            echo "   -X RUN                  run the extraction of the information"
+            echo "   -X RUN FEB CHIP CHANNEL run the extraction of the i-th channel"
+	    echo "   -M                      make clean all"
+	    echo "   -m                      make"
+	    echo "   -f RUN SUBRUN ROC       open the decoded      root file for the run and subrun and roc given"
+	    echo "   -d RUN SUBRUN           open the decoded      root file for the run and subrun given"
+	    echo "   -a RUN SUBRUN           open the ana          root file for the run and subrun given"
+	    echo "   -e RUN SUBRUN           open the event        root file for the run and subrun given"
+	    echo "   -p RUN SUBRUN           open the post_event   root file for the run and subrun given"
+	    echo "   -g RUN                  open the merged event root file for the run"
+            echo "   -x RUN                  open the channel ana  root file for the run"
+	    echo "   -c RUN                  clean the run from bad subRUN"
+	    echo "   -C RUN                  copy the run into thr GRAAL folder"
  
 	    exit 0
 	    ;;
@@ -153,6 +154,11 @@ while getopts "DAEPGMPQFmdawphegfCVXx" OPTION; do
 	C)
 	        OPT_COPY="true"
 	       ;;
+
+        c)
+                OPT_CLEAN="true"
+               ;;
+
 	x)
 	        ROOT_OPT_DAQ="true"
                ;;
@@ -189,7 +195,7 @@ then
     if [ -z $roc_number ]; then echo "Use the command 'TER -F RUN SUBRUN ROC'"; exit; fi
     echo "Decoder $run_number $subrun_number $roc_number";
     cd $TER;
-    python Decode.py ${DATADIR}/SubRUN_${subrun_number}_GEMROC_${roc_number}_TM.dat ${roc_number} 1 1
+    python Decode.py ${DATADIR}/SubRUN_${subrun_number}_GEMROC_${roc_number}_TM.dat ${roc_number} 1 ${run_number}
     mv ${DATADIR}/SubRUN_${subrun_number}_GEMROC_${roc_number}_TM.root ${ANADIR}/.
     cd $QUI;
 fi
@@ -308,6 +314,15 @@ then
     if [ -z $run_number ]; then echo "Use the command 'TER -g RUN'"; exit; fi
     root -l /home/ihep_data/data/raw_root/$run_number/event.root
 fi
+#Clean                                                                                                                                                                                                                     
+if [[ $OPT_CLEAN = "true" ]];
+then
+    if [ -z $run_number ]; then echo "Use the command 'TER -c RUN'"; exit; fi
+    echo "Cleaning from subRUN"
+    cd $TER;
+    ./bin/clean $run_number
+    cd $QUI
+fi
 #copy the event foot into graal raw data folder
 if [ $OPT_COPY = "true" ]
 then
@@ -348,15 +363,82 @@ fi
 #EXTRACTION
 if [[ $OPT_EXT = "true" ]];
 then
-    feb=$3
-    chip=$4
-    channel=$5
-    if [ -z $run_number ]; then echo "Use the command 'TER -X RUN'";exit;fi
-    cd $TER
-    if [ -z $channel ]; then ./bin/ext $run_number;
-    else ./bin/ext $run_number $feb $chip $channel;
+    check=$2
+    if [ -z $check ]; then echo "Use the command 'TER -X RUN'";exit;fi
+    if [ $check -gt 4 ]; 
+    then
+        feb=$3
+	chip=$4
+	channel=$5
+	if [ -z $run_number ]; then echo "Use the command 'TER -X RUN'";exit;fi
+	cd $TER
+	if [ -z $channel ]; then ./bin/ext $run_number;
+	else ./bin/ext $run_number $feb $chip $channel;
+	fi
+	cd $QUI
     fi
-    cd $QUI
+    if [ $check -lt 5 ];
+    then
+	nruns=$2
+	if [ $nruns == 4 ]; 
+	    then
+	    run_number1=$3
+	    run_number2=$4
+	    run_number3=$5
+	    run_number4=$6
+            feb=$7
+            chip=$8
+            channel=$9
+	    cd $TER
+	    echo $nruns $run_number1 $run_number2 $run_number3 $run_number4  
+	    if [ -z $channel ]; then ./bin/ext $nruns $run_number1 $run_number2 $run_number3 $run_number4; 
+	    else ./bin/ext $nruns $run_number1 $run_number2 $run_number3 $run_number4 $feb $chip $channel;
+	    fi
+	    cd $QUI
+	fi
+        if [ $nruns == 3 ];
+            then
+            run_number1=$3
+            run_number2=$4
+            run_number3=$5
+            feb=$6
+            chip=$7
+            channel=$8
+            cd $TER
+            echo $nruns $run_number1 $run_number2 $run_number3 
+            if [ -z $channel ]; then ./bin/ext $nruns $run_number1 $run_number2 $run_number3;
+            else ./bin/ext $nruns $run_number1 $run_number2 $run_number3 $feb $chip $channel;
+            fi
+            cd $QUI
+        fi
+        if [ $nruns == 2 ];
+            then
+            run_number1=$3
+            run_number2=$4
+            feb=$5
+            chip=$6
+            channel=$7
+            cd $TER
+            echo $nruns $run_number1 $run_number2
+            if [ -z $channel ]; then ./bin/ext $nruns $run_number1 $run_number2;
+            else ./bin/ext $nruns $run_number1 $run_number2 $feb $chip $channel;
+            fi
+            cd $QUI
+	fi
+        if [ $nruns == 1 ];
+            then
+            run_number1=$3
+            feb=$4
+            chip=$5
+            channel=$6
+            cd $TER
+            echo $nruns $run_number1
+            if [ -z $channel ]; then ./bin/ext $nruns $run_number1;
+            else ./bin/ext $nruns $run_number1 $feb $chip $channel;
+            fi
+	    cd $QUI
+        fi
+    fi
 fi
 #Extraction root open 
 if [[ $ROOT_OPT_DAQ = "true" ]];
@@ -364,3 +446,4 @@ then
     if [ -z $run_number ]; then echo "Use the command 'TER -q RUN' or TER -q RUN"; exit; fi
     root -l /home/ihep_data/data/raw_daq/extracted_noise_thr_$run_number.root
 fi
+

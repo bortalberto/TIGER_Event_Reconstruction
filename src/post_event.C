@@ -2,7 +2,7 @@
 
 const int n_chip = 100;
 int trigg_channel = 20;
-if(run>=118) trigg_channel=62;
+//if(run>=118) trigg_channel=62;
 
 double s_TriggerTime;
 unsigned int s_size;
@@ -16,7 +16,8 @@ void post_event(int run, int subrun){
   iname=iname+std::to_string(run)+"/Sub_RUN_event_"  +std::to_string(subrun)+".root";
   std::string oname=ANADIR;
   oname=oname+std::to_string(run)+"/Sub_RUN_post_event_"+std::to_string(subrun)+".root";
-  
+  if(run>=118) trigg_channel = 62;
+
   auto file = new TFile(iname.c_str());
   auto fChain = (TTree*)file->Get("tree");
 
@@ -54,7 +55,7 @@ void post_event(int run, int subrun){
   cout<<n_event<<endl;
   for(int i=0;i<n_event;i++){
     fChain->GetEntry(i);
-
+    
     //Fill the TP
     float TP[n_chip] = {-1};
     for(int j=0;j<s_size;j++){

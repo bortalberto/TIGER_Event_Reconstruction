@@ -1,0 +1,96 @@
+RUN: 218
+SUBRUN: 0
+ROC:
+./bin/event 218 0
+Evt. No.	100 	 & nHits 	1293
+Evt. No.	200 	 & nHits 	1297
+Evt. No.	300 	 & nHits 	941
+Evt. No.	400 	 & nHits 	1282
+TIGER chip 	0 efficiency: 	0.291284	 and time efficiency: 	0.277523 and time efficiency +- 1 clock: 	0.291284
+TIGER chip 	1 efficiency: 	0.573394	 and time efficiency: 	0.433486 and time efficiency +- 1 clock: 	0.571101
+TIGER chip 	2 efficiency: 	0.449541	 and time efficiency: 	0.43578 and time efficiency +- 1 clock: 	0.449541
+TIGER chip 	3 efficiency: 	0.169725	 and time efficiency: 	0.167431 and time efficiency +- 1 clock: 	0.169725
+TIGER chip 	4 efficiency: 	0.00229358	 and time efficiency: 	0.00229358 and time efficiency +- 1 clock: 	0.00229358
+TIGER chip 	5 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	6 efficiency: 	0.227064	 and time efficiency: 	0.213303 and time efficiency +- 1 clock: 	0.227064
+TIGER chip 	7 efficiency: 	0.325688	 and time efficiency: 	0.00917431 and time efficiency +- 1 clock: 	0.323394
+TIGER chip 	8 efficiency: 	0.0688073	 and time efficiency: 	0.0665138 and time efficiency +- 1 clock: 	0.0688073
+TIGER chip 	9 efficiency: 	0.0619266	 and time efficiency: 	0.059633 and time efficiency +- 1 clock: 	0.0619266
+TIGER chip 	10 efficiency: 	0.472477	 and time efficiency: 	0.46789 and time efficiency +- 1 clock: 	0.472477
+TIGER chip 	11 efficiency: 	0.34633	 and time efficiency: 	0.344037 and time efficiency +- 1 clock: 	0.34633
+TIGER chip 	12 efficiency: 	0.0252294	 and time efficiency: 	0.0252294 and time efficiency +- 1 clock: 	0.0252294
+TIGER chip 	13 efficiency: 	0.534404	 and time efficiency: 	0.525229 and time efficiency +- 1 clock: 	0.534404
+TIGER chip 	14 efficiency: 	0.795872	 and time efficiency: 	0.777523 and time efficiency +- 1 clock: 	0.793578
+TIGER chip 	15 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	16 efficiency: 	0.46789	 and time efficiency: 	0.465596 and time efficiency +- 1 clock: 	0.46789
+TIGER chip 	17 efficiency: 	0.431193	 and time efficiency: 	0.417431 and time efficiency +- 1 clock: 	0.419725
+TIGER chip 	18 efficiency: 	0.401376	 and time efficiency: 	0.401376 and time efficiency +- 1 clock: 	0.401376
+TIGER chip 	19 efficiency: 	0.183486	 and time efficiency: 	0.181193 and time efficiency +- 1 clock: 	0.183486
+TIGER chip 	20 efficiency: 	0.236239	 and time efficiency: 	0.233945 and time efficiency +- 1 clock: 	0.236239
+TIGER chip 	21 efficiency: 	0.0711009	 and time efficiency: 	0.0711009 and time efficiency +- 1 clock: 	0.0711009
+TIGER chip 	22 efficiency: 	0.316514	 and time efficiency: 	0.311927 and time efficiency +- 1 clock: 	0.316514
+TIGER chip 	23 efficiency: 	0.146789	 and time efficiency: 	0.146789 and time efficiency +- 1 clock: 	0.146789
+TIGER chip 	24 efficiency: 	0.00917431	 and time efficiency: 	0.00917431 and time efficiency +- 1 clock: 	0.00917431
+TIGER chip 	25 efficiency: 	0.626147	 and time efficiency: 	0.605505 and time efficiency +- 1 clock: 	0.626147
+TIGER chip 	26 efficiency: 	0.373853	 and time efficiency: 	0.360092 and time efficiency +- 1 clock: 	0.373853
+TIGER chip 	27 efficiency: 	0.704128	 and time efficiency: 	0.681193 and time efficiency +- 1 clock: 	0.704128
+TIGER chip 	28 efficiency: 	0.0848624	 and time efficiency: 	0.0825688 and time efficiency +- 1 clock: 	0.0848624
+TIGER chip 	29 efficiency: 	0.087156	 and time efficiency: 	0.0848624 and time efficiency +- 1 clock: 	0.087156
+TIGER chip 	30 efficiency: 	0.756881	 and time efficiency: 	0.727064 and time efficiency +- 1 clock: 	0.756881
+TIGER chip 	31 efficiency: 	0.477064	 and time efficiency: 	0.0252294 and time efficiency +- 1 clock: 	0.477064
+TIGER chip 	32 efficiency: 	0.366972	 and time efficiency: 	0.364679 and time efficiency +- 1 clock: 	0.366972
+TIGER chip 	33 efficiency: 	0.46789	 and time efficiency: 	0.46789 and time efficiency +- 1 clock: 	0.46789
+TIGER chip 	34 efficiency: 	0.256881	 and time efficiency: 	0.254587 and time efficiency +- 1 clock: 	0.256881
+TIGER chip 	35 efficiency: 	0.288991	 and time efficiency: 	0.286697 and time efficiency +- 1 clock: 	0.288991
+TIGER chip 	36 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	37 efficiency: 	0.0344037	 and time efficiency: 	0.0344037 and time efficiency +- 1 clock: 	0.0344037
+TIGER chip 	38 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	39 efficiency: 	0.0275229	 and time efficiency: 	0.0206422 and time efficiency +- 1 clock: 	0.0275229
+TIGER chip 	40 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	41 efficiency: 	0.0688073	 and time efficiency: 	0.0573394 and time efficiency +- 1 clock: 	0.0688073
+TIGER chip 	42 efficiency: 	0.644495	 and time efficiency: 	0.573394 and time efficiency +- 1 clock: 	0.644495
+TIGER chip 	43 efficiency: 	0.855505	 and time efficiency: 	0.784404 and time efficiency +- 1 clock: 	0.855505
+TIGER chip 	44 efficiency: 	0.490826	 and time efficiency: 	0.442661 and time efficiency +- 1 clock: 	0.490826
+TIGER chip 	45 efficiency: 	0.419725	 and time efficiency: 	0.394495 and time efficiency +- 1 clock: 	0.419725
+TIGER chip 	46 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	47 efficiency: 	0.305046	 and time efficiency: 	0.270642 and time efficiency +- 1 clock: 	0.305046
+TIGER chip 	48 efficiency: 	0.488532	 and time efficiency: 	0.451835 and time efficiency +- 1 clock: 	0.488532
+TIGER chip 	49 efficiency: 	0.477064	 and time efficiency: 	0.442661 and time efficiency +- 1 clock: 	0.477064
+TIGER chip 	50 efficiency: 	0.639908	 and time efficiency: 	0.591743 and time efficiency +- 1 clock: 	0.639908
+TIGER chip 	51 efficiency: 	0.775229	 and time efficiency: 	0.713303 and time efficiency +- 1 clock: 	0.775229
+TIGER chip 	52 efficiency: 	0.00229358	 and time efficiency: 	0.00229358 and time efficiency +- 1 clock: 	0.00229358
+TIGER chip 	53 efficiency: 	0.470183	 and time efficiency: 	0.399083 and time efficiency +- 1 clock: 	0.470183
+TIGER chip 	54 efficiency: 	0.337156	 and time efficiency: 	0.302752 and time efficiency +- 1 clock: 	0.337156
+TIGER chip 	55 efficiency: 	0.0114679	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0.0114679
+TIGER chip 	56 efficiency: 	0.516055	 and time efficiency: 	0.509174 and time efficiency +- 1 clock: 	0.516055
+TIGER chip 	57 efficiency: 	0.522936	 and time efficiency: 	0.518349 and time efficiency +- 1 clock: 	0.522936
+TIGER chip 	58 efficiency: 	0.0756881	 and time efficiency: 	0.0756881 and time efficiency +- 1 clock: 	0.0756881
+TIGER chip 	59 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	60 efficiency: 	0.00458716	 and time efficiency: 	0.00229358 and time efficiency +- 1 clock: 	0.00458716
+TIGER chip 	61 efficiency: 	0.344037	 and time efficiency: 	0.341743 and time efficiency +- 1 clock: 	0.344037
+TIGER chip 	62 efficiency: 	0.284404	 and time efficiency: 	0.284404 and time efficiency +- 1 clock: 	0.284404
+TIGER chip 	63 efficiency: 	0.00458716	 and time efficiency: 	0.00458716 and time efficiency +- 1 clock: 	0.00458716
+TIGER chip 	64 efficiency: 	0.155963	 and time efficiency: 	0.144495 and time efficiency +- 1 clock: 	0.155963
+TIGER chip 	65 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	66 efficiency: 	0.181193	 and time efficiency: 	0.16055 and time efficiency +- 1 clock: 	0.181193
+TIGER chip 	67 efficiency: 	0.0389908	 and time efficiency: 	0.0366972 and time efficiency +- 1 clock: 	0.0389908
+TIGER chip 	68 efficiency: 	0.0825688	 and time efficiency: 	0.0688073 and time efficiency +- 1 clock: 	0.0825688
+TIGER chip 	69 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	70 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	71 efficiency: 	0.0114679	 and time efficiency: 	0.00229358 and time efficiency +- 1 clock: 	0.0114679
+TIGER chip 	72 efficiency: 	0.110092	 and time efficiency: 	0.107798 and time efficiency +- 1 clock: 	0.110092
+TIGER chip 	73 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	74 efficiency: 	0.0183486	 and time efficiency: 	0.0183486 and time efficiency +- 1 clock: 	0.0183486
+TIGER chip 	75 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	76 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	77 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	78 efficiency: 	0.300459	 and time efficiency: 	0.288991 and time efficiency +- 1 clock: 	0.300459
+TIGER chip 	79 efficiency: 	0.380734	 and time efficiency: 	0.362385 and time efficiency +- 1 clock: 	0.380734
+TIGER chip 	80 efficiency: 	0.231651	 and time efficiency: 	0.224771 and time efficiency +- 1 clock: 	0.231651
+TIGER chip 	81 efficiency: 	0.0137615	 and time efficiency: 	0.0137615 and time efficiency +- 1 clock: 	0.0137615
+TIGER chip 	82 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	83 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	84 efficiency: 	0.0252294	 and time efficiency: 	0.0252294 and time efficiency +- 1 clock: 	0.0252294
+TIGER chip 	85 efficiency: 	0.00229358	 and time efficiency: 	0.00229358 and time efficiency +- 1 clock: 	0.00229358
+TIGER chip 	86 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0
+TIGER chip 	87 efficiency: 	0	 and time efficiency: 	0 and time efficiency +- 1 clock: 	0

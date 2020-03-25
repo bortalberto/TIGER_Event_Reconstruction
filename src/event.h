@@ -15,8 +15,9 @@
 using namespace std;
 void event(int,int);
 void TP_fill(int,int,int,double);
-void TP_test();
+void TP_test(std::vector<int>,std::vector<int>);
 void TP_cout();
+void TIGER_count(int,int);
 void exit_loop();
 int count_unique(std::vector<int> v);
 int count_diff(std::vector<int> v);

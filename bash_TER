@@ -1,0 +1,9 @@
+#!/bin/bash
+export TER=$PWD
+export Ter=$TER
+export ter=$TER
+export TER_data=$TER/data
+alias Ter='$TER/TER.sh'
+alias ter="Ter"
+alias TER="Ter"
+export exe_ter='/home/ihep_data/TIGER_Event_Reconstruction/TER.sh'

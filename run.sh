@@ -1,16 +1,11 @@
 ANADIR="/dati/Data_CGEM_IHEP_Integration_2019/raw_root/$1"
 HERE=$PWD
-NROC=11
-NSUB=10
+NROC=12
+NSUB=2000
 
 if [ ! -d ${ANADIR} ]
 then
     mkdir ${ANADIR}
-else
-    rm -f ${ANADIR}/Spill*.root
-    rm -f ${ANADIR}/event.root
-    rm -f ${ANADIR}/ana.root
-    rm -f ${ANADIR}/log
 fi
 
 #if [ ! -f "${DATADIR}/file_list" ]; then
@@ -52,47 +47,14 @@ if [[ $1 -lt 88 ]]; then
 
 fi
 if [[ $1 -gt 88 ]]; then
-    DATADIR="/dati/Data_CGEM_IHEP_Integration_2019/raw_dat/RUN_$1"
-    count=0
-    for i in $(seq 0 $NSUB);
-    do
-	# Begin the loop on hte subrun
-	for ROC in $(seq 0 $NROC);
-	do
-	    # Begin the loop on the ROC
-            echo ROC: ${ROC}  
-	    echo sub: ${i}
-            if [ -f "${DATADIR}/SubRUN_${i}_GEMROC_${ROC}_TM.dat" ]; then
-		ts bash -c "python Decode.py ${DATADIR}/SubRUN_${i}_GEMROC_${ROC}_TM.dat ${ROC} 1 $r" # triggermatch 
-                #python Decode.py ${DATADIR}/SubRUN_${i}_GEMROC_${ROC}_TL.dat ${ROC} 1 $r # triggerless     
-		count=`expr $count + 1`
-	    fi
-	done
-    done
-    ts -S 20
-    ts -N 20 bash -c "sleep 0.0001"
-    ts -w
-    for i in $(seq 0 $NSUB);
-    do
-	echo "SubRUN_${i}_GEMROC_*_TM.root"
-	if [ -f "${DATADIR}/SubRUN_${i}_GEMROC_0_TM.root" ]; then
-	#if [[ $count -gt 0 ]]; then
-	    ts bash -c "
-	    echo 'Hello'
- 	    hadd -f ${ANADIR}/Sub_RUN_dec_${i}.root ${DATADIR}/SubRUN_${i}_GEMROC*root
-	    echo 'Begin ana'
-	    ./bin/ana $1 $i
-	    echo 'Begin evt'
-	    ./bin/event $1 $i
-	    ./bin/post_event $1 $i
-            mv -f ${DATADIR}/SubRUN_${i}*root ${ANADIR}/. "
-	    count=`expr $count + 1`
-	fi
-    done
-    ts -S 20
-    ts -N 20 bash -c "sleep 0.0001"
-    ts -w
-    hadd -f ${ANADIR}/event.root ${ANADIR}/Sub_RUN_post_event*root
+    #Decode
+    ts -f bash -c "source run_decode.sh $1"
+    #Merge decode
+    ts -fd bash -c "source run_dec_merge.sh $1"
+    #Reconstruction
+    ts -fd bash -c "source run_recon.sh $1"
+    #Merge recon
+    #ts -fd $exe_ter -C $1
 fi
 
 echo "Finish"

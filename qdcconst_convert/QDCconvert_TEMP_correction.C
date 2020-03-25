@@ -12,10 +12,14 @@
 
 
 void QDCconvert(){
-    float slope_corr_L1=20; // slope correction L1
-    float constant_corr_L1=-600; // constant correction L1
-    float slope_corr_L2=20; // slope correction L2
-    float constant_corr_L2=-600; // constant correction L2
+    float slope_corr_L1=-10; // slope correction L1 %
+    float constant_corr_L1=-10; // constant correction L1 %
+    float slope_corr_L2=-10; // slope correction L2 %
+    float constant_corr_L2=-10; // constant correction L2 %
+    // float slope_corr_L1=20; // slope correction L1
+    // float constant_corr_L1=-600; // constant correction L1
+    // float slope_corr_L2=20; // slope correction L2
+    // float constant_corr_L2=-600; // constant correction L2
 
     int FEB_chiller_L1[] = {24,25,22,5,21}; //FEBs calibrated with chiller, L1
     int FEB_chiller_L2[] = {1}; //FEBs calibrated with chiller, L2
@@ -121,16 +125,16 @@ void QDCconvert(){
             {
             if(std::find(std::begin(FEB_chiller_L1), std::end(FEB_chiller_L1), tig_id) != std::end(FEB_chiller_L1))
               {
-                slope=slope+slope_corr_L1;
-                constant=constant+constant_corr_L1;
+                slope=slope*(1+slope_corr_L1/100);
+                constant=constant*(1+constant_corr_L1/100);
               }
             }
           if (layer_id==2)
             {
             if(std::find(std::begin(FEB_chiller_L2), std::end(FEB_chiller_L2), tig_id) != std::end(FEB_chiller_L2))
               {
-                slope=slope+slope_corr_L2;
-                constant=constant+constant_corr_L2;
+                slope=slope*(1+slope_corr_L2/100);
+                constant=slope*(1+constant_corr_L2/100);
               }
             }
     		  gemroc_id = FEB_label/4;
